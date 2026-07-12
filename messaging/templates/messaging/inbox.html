@@ -1,0 +1,64 @@
+{% extends "layouts/dashboard.html" %}
+{% load studcareer_tags %}
+{% block title %}Сообщения{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="flex items-center gap-3 mb-8">
+        <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Сообщения</h1>
+        {% if unread_count %}
+            <span class="px-3 py-1 bg-rose-50 text-rose-700 rounded-xl text-sm font-semibold">{{ unread_count }} новых</span>
+        {% endif %}
+    </div>
+
+    {% if conversations %}
+        <div class="space-y-2">
+            {% for conv in conversations %}
+                {% with other=conv.application.student.user %}
+                    {% if other == request.user %}
+                        {% with other=conv.application.vacancy.employer.user %}{% endwith %}
+                    {% endif %}
+                {% endwith %}
+                <a href="{% url 'conversation' pk=conv.pk %}" class="block bg-white rounded-2xl border border-gray-100 shadow-sm p-4 hover:shadow-md hover:border-gray-200 transition-all duration-200">
+                    <div class="flex items-start gap-4">
+                        {% if conv.application.student.user == request.user %}
+                            {% with emp=conv.application.vacancy.employer %}
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold text-violet-600">{{ emp.company_name|first }}</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-semibold text-gray-900">{{ emp.company_name }}</h3>
+                                        <span class="text-xs text-gray-400">{{ conv.messages.last.created_at|duration_from }}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">{{ conv.application.vacancy.title }}</p>
+                                    <p class="text-sm text-gray-400 mt-1 truncate">{{ conv.messages.last.text }}</p>
+                                </div>
+                            {% endwith %}
+                        {% else %}
+                            {% with student=conv.application.student %}
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-bold text-violet-600">{{ student.user.first_name|first|default:'?' }}</span>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="font-semibold text-gray-900">{{ student.user.get_full_name|default:student.user.email }}</h3>
+                                        <span class="text-xs text-gray-400">{{ conv.messages.last.created_at|duration_from }}</span>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mt-1">{{ conv.application.vacancy.title }}</p>
+                                    <p class="text-sm text-gray-400 mt-1 truncate">{{ conv.messages.last.text }}</p>
+                                </div>
+                                {% if conv.messages.all|length > 0 and not conv.messages.last.is_read %}
+                                    <div class="w-2 h-2 rounded-full bg-violet-500 flex-shrink-0 mt-2"></div>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% include "components/empty_state.html" with title="Нет сообщений" description="Когда вы напишете или вам напишут, чаты появятся здесь" %}
+    {% endif %}
+</div>
+{% endblock %}

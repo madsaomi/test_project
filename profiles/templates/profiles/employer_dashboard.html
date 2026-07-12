@@ -1,0 +1,54 @@
+{% extends "layouts/dashboard.html" %}
+{% load static studcareer_tags %}
+{% block title %}Панель работодателя{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-900 tracking-tight mb-6">Панель работодателя</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        {% include "components/stat_card.html" with label="Активные вакансии" value=total_vacancies %}
+        {% include "components/stat_card.html" with label="Новые отклики" value=new_applications_today %}
+        {% include "components/stat_card.html" with label="Всего откликов" value=total_applications %}
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Мои вакансии</h2>
+            <a href="{% url 'vacancy_create' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors shadow-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Создать
+            </a>
+        </div>
+        {% if vacancies %}
+            <div class="space-y-3">
+                {% for vacancy in vacancies %}
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <p class="font-medium text-gray-900 truncate">{{ vacancy.title }}</p>
+                                {% if not vacancy.is_active %}
+                                    <span class="text-xs px-2 py-0.5 bg-gray-200 text-gray-600 rounded-lg">Черновик</span>
+                                {% endif %}
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">
+                                {{ vacancy.applications.count }} откликов · {{ vacancy.created_at|duration_from }}
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 ml-4">
+                            <a href="{% url 'employer_applications' pk=vacancy.pk %}" class="px-4 py-1.5 text-sm font-medium text-violet-600 hover:bg-violet-50 rounded-lg transition-colors">
+                                Отклики ({{ vacancy.applications.count }})
+                            </a>
+                            <a href="{% url 'vacancy_update' pk=vacancy.pk %}" class="px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+                                Ред.
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            {% include "components/empty_state.html" with title="У вас нет вакансий" description="Создайте первую стажировку и начните поиск сотрудников" action_url="/dashboard/employer/vacancies/new/" action_text="Создать стажировку" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "layouts/guest.html" %}
+{% load i18n %}
+{% block title %}Выход — StudCareer{% endblock %}
+
+{% block content %}
+<div class="min-h-[70vh] flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md text-center">
+        <div class="w-14 h-14 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto">
+            <svg class="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-900 mt-4">Выйти из аккаунта</h1>
+        <p class="text-gray-500 mt-2">Вы уверены, что хотите выйти?</p>
+        <form method="post" action="{% url 'account_logout' %}" class="mt-6">
+            {% csrf_token %}
+            {% if redirect_field_value %}
+                <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+            {% endif %}
+            <div class="flex items-center justify-center gap-3">
+                <a href="/" class="px-6 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Отмена</a>
+                <button type="submit" class="px-6 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors shadow-sm">Выйти</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "layouts/dashboard.html" %}
+{% load static studcareer_tags %}
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-900 tracking-tight mb-6">Личный кабинет</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        {% include "components/stat_card.html" with label="Всего откликов" value=total_applications %}
+        {% include "components/stat_card.html" with label="Просмотрено" value=viewed_applications %}
+        {% include "components/stat_card.html" with label="Приглашения" value=invited_applications %}
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Мой профиль</h2>
+            <a href="{% url 'student_profile_update' %}" class="text-sm font-medium text-violet-600 hover:text-violet-700 transition-colors">Редактировать</a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+                <span class="text-gray-500">Имя:</span>
+                <span class="font-medium ml-2 text-gray-900">{{ user.get_full_name|default:"Не указано" }}</span>
+            </div>
+            <div>
+                <span class="text-gray-500">Email:</span>
+                <span class="font-medium ml-2 text-gray-900">{{ user.email }}</span>
+            </div>
+            <div>
+                <span class="text-gray-500">Город:</span>
+                <span class="font-medium ml-2 text-gray-900">{{ profile.city|default:"Не указан" }}</span>
+            </div>
+            <div>
+                <span class="text-gray-500">Навыки:</span>
+                <span class="font-medium ml-2 text-gray-900">{{ profile.skills|join:", "|default:"Не указаны" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Мои отклики</h2>
+            <a href="{% url 'student_applications' %}" class="text-sm font-medium text-violet-600 hover:text-violet-700 transition-colors">Все отклики →</a>
+        </div>
+        {% if applications %}
+            <div class="space-y-3">
+                {% for app in applications|slice:":5" %}
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div>
+                            <p class="font-medium text-sm text-gray-900">{{ app.vacancy.title }}</p>
+                            <p class="text-xs text-gray-500 mt-0.5">{{ app.vacancy.employer.company_name }}</p>
+                        </div>
+                        {% include "components/badge.html" with status=app.status label=app.get_status_display %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            {% include "components/empty_state.html" with title="Вы ещё не откликались" description="Найдите подходящую стажировку и отправьте отклик" action_url="/vacancies/" action_text="Смотреть стажировки" %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

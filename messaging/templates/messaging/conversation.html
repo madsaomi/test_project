@@ -1,0 +1,55 @@
+{% extends "layouts/dashboard.html" %}
+{% load studcareer_tags %}
+{% block title %}Чат{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="flex items-center gap-3 mb-6">
+        <a href="{% url 'inbox' %}" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </a>
+        <div>
+            <h1 class="text-xl font-bold text-gray-900 tracking-tight">
+                {% if conversation.application.student.user == user %}
+                    {{ conversation.application.vacancy.employer.company_name }}
+                {% else %}
+                    {{ conversation.application.student.user.get_full_name|default:conversation.application.student.user.email }}
+                {% endif %}
+            </h1>
+            <p class="text-sm text-gray-500">{{ conversation.application.vacancy.title }}</p>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-5 space-y-4 max-h-[60vh] overflow-y-auto" x-data>
+            {% for msg in conversation.messages.all %}
+                <div class="flex {% if msg.sender == user %}justify-end{% endif %}">
+                    <div class="max-w-[75%] {% if msg.sender == user %}bg-violet-600 text-white{% else %}bg-gray-50 text-gray-900{% endif %} rounded-2xl px-4 py-2.5">
+                        <p class="text-sm leading-relaxed">{{ msg.text }}</p>
+                        <p class="text-xs mt-1 {% if msg.sender == user %}text-violet-200{% else %}text-gray-400{% endif %}">
+                            {{ msg.created_at|date:"H:i" }}
+                            {% if msg.sender == user and msg.is_read %}
+                                <span class="ml-1">✓✓</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center text-gray-400 py-8 text-sm">Нет сообщений. Напишите первое!</p>
+            {% endfor %}
+        </div>
+
+        <div class="border-t border-gray-100 p-4">
+            <form method="post" action="{% url 'send_message' application_pk=conversation.application.pk %}" class="flex items-center gap-3">
+                {% csrf_token %}
+                <input type="text" name="text" placeholder="Напишите сообщение..." autocomplete="off" required
+                       class="flex-1 px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all">
+                <button type="submit" class="px-5 py-2.5 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 transition-colors shadow-sm flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19V5m0 0l-7 7m7-7l7 7"/></svg>
+                    Отправить
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

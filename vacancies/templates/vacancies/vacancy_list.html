@@ -1,0 +1,86 @@
+{% extends "layouts/guest.html" %}
+{% load studcareer_tags %}
+{% block title %}Стажировки — StudCareer{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Стажировки</h1>
+            <p class="text-gray-500 mt-2">Найдено: {{ page_obj.paginator.count }} вакансий</p>
+        </div>
+    </div>
+
+    <div class="lg:grid lg:grid-cols-4 lg:gap-8">
+        <aside class="lg:col-span-1 mb-6 lg:mb-0" x-data="{ open: false }">
+            <button @click="open = !open" class="lg:hidden flex items-center justify-between w-full px-5 py-3 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 shadow-sm">
+                <span class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+                    Фильтры
+                </span>
+                <svg :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+            <div :class="open ? 'block' : 'hidden'" class="lg:block mt-3 lg:mt-0">
+                <div class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm space-y-5">
+                    <form method="get" action="{% url 'vacancy_list' %}">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Поиск</label>
+                            <input type="text" name="q" value="{{ request.GET.q }}" placeholder="Название..." class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all">
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Категория</label>
+                            <select name="category" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all bg-white">
+                                <option value="">Все</option>
+                                {% for cat in categories %}
+                                    <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Тип работы</label>
+                            <select name="work_type" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all bg-white">
+                                <option value="">Все</option>
+                                {% for value, label in work_types %}
+                                    <option value="{{ value }}" {% if request.GET.work_type == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Город</label>
+                            <input type="text" name="city" value="{{ request.GET.city }}" placeholder="Город..." class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all">
+                        </div>
+                        <button type="submit" class="w-full mt-5 px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors">Применить</button>
+                        <a href="{% url 'vacancy_list' %}" class="block w-full text-center mt-2 px-4 py-2 text-sm text-gray-500 hover:text-gray-700 transition-colors">Сбросить</a>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <div class="lg:col-span-3">
+            <div class="space-y-4" id="vacancy-list">
+                {% for vacancy in vacancies %}
+                    {% include "components/vacancy_card.html" %}
+                {% empty %}
+                    {% include "components/empty_state.html" with title="Ничего не найдено" description="Попробуйте изменить параметры поиска" %}
+                {% endfor %}
+            </div>
+
+            {% if page_obj.paginator.num_pages > 1 %}
+                <div class="mt-10 flex justify-center">
+                    <nav class="flex items-center gap-2">
+                        {% if page_obj.has_previous %}
+                            <a href="?{% url_replace page=page_obj.previous_page_number %}" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors">←</a>
+                        {% endif %}
+                        {% for num in page_obj.paginator.page_range %}
+                            <a href="?{% url_replace page=num %}" class="px-4 py-2 rounded-xl text-sm font-medium transition-all {% if num == page_obj.number %}bg-gray-900 text-white shadow-sm{% else %}bg-white border border-gray-200 text-gray-600 hover:bg-gray-50{% endif %}">{{ num }}</a>
+                        {% endfor %}
+                        {% if page_obj.has_next %}
+                            <a href="?{% url_replace page=page_obj.next_page_number %}" class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors">→</a>
+                        {% endif %}
+                    </nav>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

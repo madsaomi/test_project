@@ -2,14 +2,12 @@ from django.views.generic import ListView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
 from django.db import IntegrityError
 from django.views import View
-from django.http import JsonResponse
 from .models import Application
 from .forms import ApplicationForm
 from vacancies.models import Vacancy
-from profiles.models import StudentProfile, EmployerProfile
+from profiles.models import StudentProfile
 
 
 class ApplyToVacancyView(LoginRequiredMixin, View):
@@ -49,22 +47,11 @@ class StudentApplicationsView(LoginRequiredMixin, ListView):
         )
 
 
-class EmployerApplicationsView(LoginRequiredMixin, ListView):
-    template_name = "applications/employer_applications.html"
-    context_object_name = "applications"
-
-    def get_queryset(self):
-        profile = get_object_or_404(EmployerProfile, user=self.request.user)
-        return Application.objects.filter(
-            vacancy__employer=profile
-        ).select_related("student", "student__user", "vacancy")
-
-
 class UpdateApplicationStatusView(LoginRequiredMixin, View):
     def post(self, request, pk):
-        application = get_object_or_404(Application, pk=pk)
-        if application.vacancy.employer.user != request.user:
-            return JsonResponse({"error": "Forbidden"}, status=403)
+        application = get_object_or_404(
+            Application, pk=pk, vacancy__employer__user=request.user
+        )
 
         new_status = request.POST.get("status")
         if new_status in dict(Application.Status.choices):
@@ -80,14 +67,14 @@ class VacancyApplicationsView(LoginRequiredMixin, ListView):
     context_object_name = "applications"
 
     def get_queryset(self):
-        vacancy = get_object_or_404(
+        self.vacancy = get_object_or_404(
             Vacancy, pk=self.kwargs["pk"], employer__user=self.request.user
         )
-        return Application.objects.filter(vacancy=vacancy).select_related(
+        return Application.objects.filter(vacancy=self.vacancy).select_related(
             "student", "student__user"
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["vacancy"] = get_object_or_404(Vacancy, pk=self.kwargs["pk"])
+        context["vacancy"] = self.vacancy
         return context

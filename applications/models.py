@@ -21,6 +21,7 @@ class Application(models.Model):
     status = models.CharField(
         max_length=10, choices=Status.choices,
         default=Status.SENT, verbose_name="Статус",
+        db_index=True,
     )
     cover_letter = models.TextField(blank=True, verbose_name="Сопроводительное письмо")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -29,7 +30,9 @@ class Application(models.Model):
         verbose_name = "Отклик"
         verbose_name_plural = "Отклики"
         ordering = ["-created_at"]
-        unique_together = ("vacancy", "student")
+        constraints = [
+            models.UniqueConstraint(fields=["vacancy", "student"], name="unique_application"),
+        ]
 
     def __str__(self):
         return f"{self.student.user.email} -> {self.vacancy.title}"

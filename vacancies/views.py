@@ -24,14 +24,9 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["categories"] = Category.objects.all()
-        context["popular_categories"] = [
-            {"name": "Python", "slug": "python"},
-            {"name": "Frontend", "slug": "frontend"},
-            {"name": "SMM", "slug": "smm"},
-            {"name": "Design", "slug": "design"},
-            {"name": "QA", "slug": "qa"},
-            {"name": "Backend", "slug": "backend"},
-        ]
+        context["popular_categories"] = Category.objects.annotate(
+            vacancy_count=models.Count("vacancies", filter=models.Q(vacancies__is_active=True))
+        ).order_by("-vacancy_count")[:6]
         return context
 
 
@@ -65,7 +60,10 @@ class VacancyDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         vacancy = self.object
-        Vacancy.objects.filter(pk=vacancy.pk).update(views_count=models.F("views_count") + 1)
+        session_key = f"viewed_vacancy_{vacancy.pk}"
+        if not self.request.session.get(session_key, False):
+            Vacancy.objects.filter(pk=vacancy.pk).update(views_count=models.F("views_count") + 1)
+            self.request.session[session_key] = True
         if self.request.user.is_authenticated and self.request.user.role == "student":
             profile = get_object_or_404(StudentProfile, user=self.request.user)
             already_applied = Application.objects.filter(
@@ -102,13 +100,8 @@ class VacancyUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "vacancies/vacancy_form.html"
     success_url = reverse_lazy("employer_dashboard")
 
-    def dispatch(self, request, *args, **kwargs):
-        vacancy = self.get_object()
-        if vacancy.employer.user != request.user:
-            messages.error(request, "Вы не можете редактировать эту вакансию")
-            from django.shortcuts import redirect
-            return redirect("dashboard_redirect")
-        return super().dispatch(request, *args, **kwargs)
+    def get_queryset(self):
+        return Vacancy.objects.filter(employer__user=self.request.user)
 
     def form_valid(self, form):
         messages.success(self.request, "Вакансия обновлена")

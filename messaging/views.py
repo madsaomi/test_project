@@ -2,7 +2,7 @@ from django.views.generic import ListView, DetailView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages as django_messages
-from django.urls import reverse
+from django.http import Http404
 from django.db.models import Q, Count
 from .models import Conversation, Message
 from applications.models import Application
@@ -18,26 +18,34 @@ class InboxView(LoginRequiredMixin, ListView):
             Q(application__vacancy__employer__user=user) |
             Q(application__student__user=user)
         ).annotate(
-            unread=Count("messages", filter=Q(messages__is_read=False, messages__sender=user)),
+            unread_count=Count(
+                "messages",
+                filter=Q(messages__is_read=False) & ~Q(messages__sender=user),
+            ),
+            last_message_text=Count("messages"),
         ).select_related(
             "application", "application__vacancy",
             "application__student__user",
             "application__vacancy__employer",
+            "application__vacancy__employer__user",
+        ).prefetch_related(
+            "messages",
         ).order_by("-updated_at")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        unread = 0
-        for c in context["conversations"]:
-            if c.messages.filter(is_read=False).exclude(sender=self.request.user).exists():
-                unread += 1
-        context["unread_count"] = unread
+        context["unread_count"] = sum(
+            c.unread_count for c in context["conversations"]
+        )
         return context
 
 
 class ConversationView(LoginRequiredMixin, DetailView):
     template_name = "messaging/conversation.html"
-    model = Conversation
+    queryset = Conversation.objects.select_related(
+        "application__vacancy__employer__user",
+        "application__student__user",
+    )
 
     def get_object(self, queryset=None):
         conv = super().get_object(queryset)
@@ -47,51 +55,43 @@ class ConversationView(LoginRequiredMixin, DetailView):
             conv.application.student.user == user
         )
         if not can_access:
-            from django.http import Http404
             raise Http404()
         return conv
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         conv = self.object
-        conv.messages.filter(~Q(sender=self.request.user), is_read=False).update(is_read=True)
+        conv.messages.select_related("sender").filter(
+            ~Q(sender=self.request.user), is_read=False
+        ).update(is_read=True)
+        context["messages_list"] = conv.messages.select_related("sender").all()
         return context
 
 
 class SendMessageView(LoginRequiredMixin, View):
     def get(self, request, application_pk):
-        application = get_object_or_404(Application, pk=application_pk)
-        user = request.user
-        can_message = (
-            application.vacancy.employer.user == user or
-            application.student.user == user
+        application = get_object_or_404(
+            Application, pk=application_pk,
+            Q(vacancy__employer__user=request.user) | Q(student__user=request.user),
         )
-        if not can_message:
-            django_messages.error(request, "Доступ запрещён")
-            return redirect("dashboard_redirect")
         conversation, _ = Conversation.objects.get_or_create(application=application)
         return redirect("conversation", pk=conversation.pk)
 
     def post(self, request, application_pk):
-        application = get_object_or_404(Application, pk=application_pk)
-        user = request.user
-        can_message = (
-            application.vacancy.employer.user == user or
-            application.student.user == user
+        application = get_object_or_404(
+            Application, pk=application_pk,
+            Q(vacancy__employer__user=request.user) | Q(student__user=request.user),
         )
-        if not can_message:
-            django_messages.error(request, "Доступ запрещён")
-            return redirect("dashboard_redirect")
 
         text = request.POST.get("text", "").strip()
         if not text:
             django_messages.error(request, "Сообщение не может быть пустым")
-            return redirect("employer_applications", pk=application.vacancy.pk)
+            return redirect("conversation", pk=Conversation.objects.get(application=application).pk)
 
         conversation, _ = Conversation.objects.get_or_create(application=application)
         Message.objects.create(
             conversation=conversation,
-            sender=user,
-            text=text,
+            sender=request.user,
+            text=text[:5000],
         )
         return redirect("conversation", pk=conversation.pk)

@@ -14,6 +14,8 @@ def url_replace(context, **kwargs):
 
 @register.filter
 def duration_from(value):
+    if not value:
+        return ""
     days = (timezone.now() - value).days
     if days == 0:
         return "Сегодня"
@@ -31,12 +33,12 @@ def duration_from(value):
 @register.filter
 def status_color(value):
     colors = {
-        "sent": "bg-amber-50 text-amber-700",
-        "viewed": "bg-blue-50 text-blue-700",
-        "invited": "bg-emerald-50 text-emerald-700",
-        "rejected": "bg-rose-50 text-rose-700",
+        "sent": "bg-amber-50 text-amber-600",
+        "viewed": "bg-blue-50 text-blue-600",
+        "invited": "bg-emerald-50 text-emerald-600",
+        "rejected": "bg-rose-50 text-rose-600",
     }
-    return colors.get(value, "bg-gray-50 text-gray-700")
+    return colors.get(value, "bg-slate-50 text-slate-600")
 
 
 @register.filter

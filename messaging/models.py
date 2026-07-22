@@ -31,9 +31,9 @@ class Message(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
         related_name="sent_messages",
     )
-    text = models.TextField(verbose_name="Текст")
-    is_read = models.BooleanField(default=False, verbose_name="Прочитано")
-    created_at = models.DateTimeField(auto_now_add=True)
+    text = models.TextField(verbose_name="Текст", max_length=5000)
+    is_read = models.BooleanField(default=False, verbose_name="Прочитано", db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
     class Meta:
         verbose_name = "Сообщение"

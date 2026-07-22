@@ -1,8 +1,8 @@
 from django.views.generic import TemplateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.db.models import Count
 from .models import StudentProfile, EmployerProfile
 from .forms import StudentProfileForm, EmployerProfileForm
 from applications.models import Application
@@ -55,10 +55,12 @@ class EmployerDashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         profile, _ = EmployerProfile.objects.get_or_create(user=self.request.user)
-        vacancies = profile.vacancies.all()
-        total_applications = Application.objects.filter(vacancy__in=vacancies).count()
+        vacancies = profile.vacancies.annotate(
+            app_count=Count("applications"),
+        )
+        total_applications = sum(v.app_count for v in vacancies)
         recent_applications = Application.objects.filter(
-            vacancy__in=vacancies, status="sent"
+            vacancy__employer=profile, status="sent"
         ).count()
         context.update({
             "profile": profile,

@@ -6,26 +6,26 @@
 <div class="max-w-4xl mx-auto">
     <div class="flex items-baseline justify-between mb-8">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Отклики</h1>
-            <p class="text-sm text-gray-500 mt-1">{{ vacancy.title }}</p>
+            <h1 class="font-display text-2xl font-bold text-slate-900">Отклики</h1>
+            <p class="text-sm text-slate-500 mt-1">{{ vacancy.title }}</p>
         </div>
-        <span class="text-sm text-gray-400">{{ applications.count }}</span>
+        <span class="text-sm text-slate-400">{{ applications.count }}</span>
     </div>
 
     {% if applications %}
         <div class="space-y-2">
             {% for app in applications %}
-                <div class="bg-white rounded-xl border border-gray-100 p-4" x-data="{ open: false, showResume: false }">
+                <div class="bg-white rounded-xl border border-slate-100 p-4" x-data="{ open: false, showResume: false }">
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 text-sm font-semibold text-gray-600">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0 text-sm font-semibold text-slate-600">
                             {{ app.student.user.first_name|first|default:'?' }}{{ app.student.user.last_name|first }}
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-3">
-                                <span class="font-medium text-gray-900">{{ app.student.user.get_full_name|default:app.student.user.email }}</span>
+                                <span class="font-medium text-slate-900">{{ app.student.user.get_full_name|default:app.student.user.email }}</span>
                                 {% include "components/badge.html" with status=app.status label=app.get_status_display %}
                             </div>
-                            <div class="text-sm text-gray-500 mt-1 flex items-center gap-2">
+                            <div class="text-sm text-slate-500 mt-1 flex items-center gap-2">
                                 <span>{{ app.student.user.email }}</span>
                                 {% if app.student.city %}
                                     <span>·</span>
@@ -39,20 +39,20 @@
                                         <form method="post" action="{% url 'update_application_status' pk=app.id %}" class="inline">
                                             {% csrf_token %}
                                             <input type="hidden" name="status" value="{{ status_value }}">
-                                            <button type="submit" class="px-3 py-1.5 text-sm font-medium rounded-lg transition-colors border border-gray-200 hover:border-gray-300
+                                            <button type="submit" class="px-3 py-1.5 text-sm font-medium rounded-lg transition-colors border border-slate-200 hover:border-slate-300
                                                 {% if status_value == 'viewed' %}text-blue-600 hover:bg-blue-50 hover:border-blue-200
                                                 {% elif status_value == 'invited' %}text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200
                                                 {% elif status_value == 'rejected' %}text-rose-600 hover:bg-rose-50 hover:border-rose-200
-                                                {% else %}text-gray-500 hover:bg-gray-50{% endif %}">
+                                                {% else %}text-slate-500 hover:bg-slate-50{% endif %}">
                                                 {{ status_label }}
                                             </button>
                                         </form>
                                     {% endif %}
                                 {% endfor %}
-                                <a href="{% url 'send_message' application_pk=app.id %}" class="px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">Чат</a>
-                                <button @click="showResume = true" class="px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">Профиль</button>
+                                <a href="{% url 'send_message' application_pk=app.id %}" class="px-3 py-1.5 text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">Чат</a>
+                                <button @click="showResume = true" class="px-3 py-1.5 text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">Профиль</button>
                                 {% if app.cover_letter %}
-                                    <button @click="open = !open" class="px-3 py-1.5 text-sm text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
+                                    <button @click="open = !open" class="px-3 py-1.5 text-sm text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
                                         {{ open|yesno:"Скрыть письмо,Письмо" }}
                                     </button>
                                 {% endif %}
@@ -62,7 +62,7 @@
 
                     {% if app.cover_letter %}
                         <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="mt-3 ml-14">
-                            <div class="p-4 bg-gray-50 rounded-xl text-sm text-gray-600 leading-relaxed">
+                            <div class="p-4 bg-slate-50 rounded-xl text-sm text-slate-600 leading-relaxed">
                                 {{ app.cover_letter }}
                             </div>
                         </div>
@@ -73,64 +73,64 @@
                     <div x-show="showResume" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="showResume = false">
                         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
                         <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto">
-                            <div class="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white">
-                                <span class="text-sm font-semibold text-gray-900">Профиль — {{ app.student.user.get_full_name }}</span>
-                                <button @click="showResume = false" class="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
-                                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            <div class="flex items-center justify-between p-5 border-b border-slate-100 sticky top-0 bg-white">
+                                <span class="text-sm font-semibold text-slate-900">Профиль — {{ app.student.user.get_full_name }}</span>
+                                <button @click="showResume = false" class="p-1.5 hover:bg-slate-100 rounded-lg transition-colors">
+                                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
                             </div>
                             <div class="p-5 space-y-5">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-lg font-semibold text-gray-600">
+                                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center text-lg font-semibold text-teal-700">
                                         {{ app.student.user.first_name|first|default:'?' }}{{ app.student.user.last_name|first }}
                                     </div>
                                     <div>
-                                        <h2 class="text-lg font-bold text-gray-900">{{ app.student.user.get_full_name }}</h2>
-                                        <p class="text-sm text-gray-500">{{ app.student.user.email }}</p>
+                                        <h2 class="text-lg font-bold text-slate-900">{{ app.student.user.get_full_name }}</h2>
+                                        <p class="text-sm text-slate-500">{{ app.student.user.email }}</p>
                                     </div>
                                 </div>
 
                                 {% if app.student.city %}
                                 <div>
-                                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Город</h3>
-                                    <p class="text-sm text-gray-900">{{ app.student.city }}</p>
+                                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Город</h3>
+                                    <p class="text-sm text-slate-900">{{ app.student.city }}</p>
                                 </div>
                                 {% endif %}
 
                                 {% if app.student.desired_position %}
                                 <div>
-                                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Желаемая должность</h3>
-                                    <p class="text-sm text-gray-900">{{ app.student.desired_position }}</p>
+                                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Желаемая должность</h3>
+                                    <p class="text-sm text-slate-900">{{ app.student.desired_position }}</p>
                                 </div>
                                 {% endif %}
 
                                 {% if app.student.education %}
                                 <div>
-                                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Образование</h3>
-                                    <p class="text-sm text-gray-900">{{ app.student.education }}</p>
+                                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Образование</h3>
+                                    <p class="text-sm text-slate-900">{{ app.student.education }}</p>
                                 </div>
                                 {% endif %}
 
                                 {% if app.student.experience %}
                                 <div>
-                                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Опыт</h3>
-                                    <p class="text-sm text-gray-900">{{ app.student.experience }}</p>
+                                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Опыт</h3>
+                                    <p class="text-sm text-slate-900">{{ app.student.experience }}</p>
                                 </div>
                                 {% endif %}
 
                                 {% if app.student.languages %}
                                 <div>
-                                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Языки</h3>
-                                    <p class="text-sm text-gray-900">{{ app.student.languages }}</p>
+                                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Языки</h3>
+                                    <p class="text-sm text-slate-900">{{ app.student.languages }}</p>
                                 </div>
                                 {% endif %}
 
                                 {% if app.student.skills %}
                                 <div>
-                                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Навыки</h3>
+                                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Навыки</h3>
                                     <div class="flex flex-wrap gap-1.5 mt-1">
                                         {% for skill in app.student.skills %}
-                                            <span class="px-2.5 py-1 bg-gray-50 rounded-lg text-sm text-gray-700">{{ skill }}</span>
+                                            <span class="px-2.5 py-1 bg-slate-50 rounded-lg text-sm text-slate-700">{{ skill }}</span>
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -138,34 +138,34 @@
 
                                 {% if app.student.resume_text %}
                                 <div>
-                                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">О себе</h3>
-                                    <p class="text-sm text-gray-600 leading-relaxed">{{ app.student.resume_text }}</p>
+                                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">О себе</h3>
+                                    <p class="text-sm text-slate-600 leading-relaxed">{{ app.student.resume_text }}</p>
                                 </div>
                                 {% endif %}
 
                                 {% if app.student.telegram or app.student.linkedin or app.student.github or app.student.portfolio %}
                                 <div>
-                                    <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Ссылки</h3>
+                                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Ссылки</h3>
                                     <div class="space-y-1 mt-1">
                                         {% if app.student.telegram %}
-                                            <a href="{{ app.student.telegram }}" target="_blank" class="block text-sm text-gray-600 hover:text-gray-900 transition-colors">Telegram →</a>
+                                            <a href="{{ app.student.telegram }}" target="_blank" class="block text-sm text-slate-600 hover:text-slate-900 transition-colors">Telegram →</a>
                                         {% endif %}
                                         {% if app.student.linkedin %}
-                                            <a href="{{ app.student.linkedin }}" target="_blank" class="block text-sm text-gray-600 hover:text-gray-900 transition-colors">LinkedIn →</a>
+                                            <a href="{{ app.student.linkedin }}" target="_blank" class="block text-sm text-slate-600 hover:text-slate-900 transition-colors">LinkedIn →</a>
                                         {% endif %}
                                         {% if app.student.github %}
-                                            <a href="{{ app.student.github }}" target="_blank" class="block text-sm text-gray-600 hover:text-gray-900 transition-colors">GitHub →</a>
+                                            <a href="{{ app.student.github }}" target="_blank" class="block text-sm text-slate-600 hover:text-slate-900 transition-colors">GitHub →</a>
                                         {% endif %}
                                         {% if app.student.portfolio %}
-                                            <a href="{{ app.student.portfolio }}" target="_blank" class="block text-sm text-gray-600 hover:text-gray-900 transition-colors">Портфолио →</a>
+                                            <a href="{{ app.student.portfolio }}" target="_blank" class="block text-sm text-slate-600 hover:text-slate-900 transition-colors">Портфолио →</a>
                                         {% endif %}
                                     </div>
                                 </div>
                                 {% endif %}
 
                                 {% if app.student.resume %}
-                                <div class="pt-4 border-t border-gray-100">
-                                    <a href="{{ app.student.resume.url }}" target="_blank" class="inline-flex items-center gap-2 text-sm font-medium text-gray-900 hover:text-gray-600 transition-colors">
+                                <div class="pt-4 border-t border-slate-100">
+                                    <a href="{{ app.student.resume.url }}" target="_blank" class="inline-flex items-center gap-2 text-sm font-medium text-slate-900 hover:text-slate-600 transition-colors">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                         Скачать PDF-резюме →
                                     </a>
@@ -178,7 +178,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <div class="bg-white rounded-xl border border-gray-100 p-8">
+        <div class="bg-white rounded-xl border border-slate-100 p-8">
             {% include "components/empty_state.html" with title="Нет откликов" description="На эту стажировку пока никто не откликнулся" %}
         </div>
     {% endif %}

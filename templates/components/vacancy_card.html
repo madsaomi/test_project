@@ -1,26 +1,26 @@
 {% load studcareer_tags %}
-<a href="{% url 'vacancy_detail' pk=vacancy.id %}" class="group block bg-white rounded-2xl border border-gray-100 p-5 hover:border-violet-200 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+<a href="{% url 'vacancy_detail' pk=vacancy.id %}" class="group block card-gradient bg-white rounded-2xl p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
     <div class="flex items-start gap-4">
         {% if vacancy.employer.company_logo %}
             <img src="{{ vacancy.employer.company_logo.url }}" class="w-12 h-12 rounded-xl object-cover flex-shrink-0">
         {% else %}
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-indigo-100 flex items-center justify-center flex-shrink-0">
-                <span class="text-base font-bold text-violet-600">{{ vacancy.employer.company_name|first }}</span>
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-100 to-teal-200 flex items-center justify-center flex-shrink-0">
+                <span class="text-base font-bold text-teal-700">{{ vacancy.employer.company_name|first }}</span>
             </div>
         {% endif %}
         <div class="flex-1 min-w-0">
-            <h3 class="font-semibold text-gray-900 group-hover:text-violet-600 transition-colors line-clamp-2">{{ vacancy.title }}</h3>
-            <p class="text-sm text-gray-500 mt-1">{{ vacancy.employer.company_name }}</p>
+            <h3 class="font-semibold text-slate-900 group-hover:text-teal-600 transition-colors line-clamp-2">{{ vacancy.title }}</h3>
+            <p class="text-sm text-slate-500 mt-1">{{ vacancy.employer.company_name }}</p>
         </div>
     </div>
     <div class="mt-4 flex flex-wrap items-center gap-2 text-sm">
         {% if vacancy.city %}
-            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-lg text-gray-600">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 rounded-lg text-slate-600">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                 {{ vacancy.city }}
             </span>
         {% endif %}
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 rounded-lg text-gray-600">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 rounded-lg text-slate-600">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
             {{ vacancy.work_type|work_type_label }}
         </span>
@@ -32,8 +32,8 @@
         {% endif %}
     </div>
     <div class="mt-4 flex items-center justify-between">
-        <span class="text-sm text-gray-400">{{ vacancy.created_at|duration_from }}</span>
-        <span class="text-sm font-medium text-violet-600 group-hover:text-violet-700 transition-colors">
+        <span class="text-sm text-slate-400">{{ vacancy.created_at|duration_from }}</span>
+        <span class="text-sm font-medium text-teal-600 group-hover:text-teal-700 transition-colors">
             Подробнее →
         </span>
     </div>

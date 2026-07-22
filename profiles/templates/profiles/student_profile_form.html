@@ -4,106 +4,106 @@
 {% block content %}
 <div class="max-w-3xl mx-auto">
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-gray-900">Мой профиль</h1>
-        <p class="text-sm text-gray-500 mt-1">Заполните информацию — это и есть ваше резюме для работодателей</p>
+        <h1 class="font-display text-2xl font-bold text-slate-900">Мой профиль</h1>
+        <p class="text-sm text-slate-500 mt-1">Заполните информацию — это и есть ваше резюме для работодателей</p>
     </div>
 
     <form method="post" class="space-y-6">
         {% csrf_token %}
 
-        <div class="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
-            <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Основное</h2>
+        <div class="bg-white rounded-xl border border-slate-100 p-6 space-y-5">
+            <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Основное</h2>
 
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="text-sm font-semibold text-gray-900">Имя</label>
+                    <label class="text-sm font-semibold text-slate-900">Имя</label>
                     <input type="text" name="first_name" value="{{ user.first_name|default:'' }}" placeholder="Имя"
-                           class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all">
+                           class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
                 </div>
                 <div>
-                    <label class="text-sm font-semibold text-gray-900">Фамилия</label>
+                    <label class="text-sm font-semibold text-slate-900">Фамилия</label>
                     <input type="text" name="last_name" value="{{ user.last_name|default:'' }}" placeholder="Фамилия"
-                           class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all">
+                           class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
                 </div>
             </div>
 
             <div>
-                <label class="text-sm font-semibold text-gray-900">Желаемая должность</label>
+                <label class="text-sm font-semibold text-slate-900">Желаемая должность</label>
                 <input type="text" name="desired_position" value="{{ form.desired_position.value|default:'' }}" placeholder="Например: Junior Python Developer"
-                       class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all">
+                       class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
             </div>
 
             <div>
-                <label class="text-sm font-semibold text-gray-900">Город</label>
+                <label class="text-sm font-semibold text-slate-900">Город</label>
                 <input type="text" name="city" value="{{ form.city.value|default:'' }}" placeholder="Ташкент"
-                       class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all">
+                       class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
             </div>
         </div>
 
-        <div class="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
-            <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Обо мне</h2>
+        <div class="bg-white rounded-xl border border-slate-100 p-6 space-y-5">
+            <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Обо мне</h2>
 
             <div>
-                <label class="text-sm font-semibold text-gray-900">О себе</label>
-                <textarea name="resume_text" rows="4" placeholder="Кратко о себе, ключевые навыки, цели, что ищете" class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all resize-none">{{ form.resume_text.value|default:'' }}</textarea>
+                <label class="text-sm font-semibold text-slate-900">О себе</label>
+                <textarea name="resume_text" rows="4" placeholder="Кратко о себе, ключевые навыки, цели, что ищете" class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all resize-none">{{ form.resume_text.value|default:'' }}</textarea>
             </div>
 
             <div>
-                <label class="text-sm font-semibold text-gray-900">Навыки</label>
+                <label class="text-sm font-semibold text-slate-900">Навыки</label>
                 <input type="text" name="skills" value="{% if form.skills.value %}{{ form.skills.value|join:', ' }}{% endif %}" placeholder="Python, Django, PostgreSQL, SQL, Git, Linux"
-                       class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all">
-                <p class="mt-1 text-xs text-gray-400">Через запятую</p>
+                       class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
+                <p class="mt-1 text-xs text-slate-400">Через запятую</p>
             </div>
 
             <div>
-                <label class="text-sm font-semibold text-gray-900">Образование</label>
+                <label class="text-sm font-semibold text-slate-900">Образование</label>
                 <input type="text" name="education" value="{{ form.education.value|default:'' }}" placeholder="ТУИТ, факультет программирования, 2022-2026"
-                       class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all">
+                       class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
             </div>
 
             <div>
-                <label class="text-sm font-semibold text-gray-900">Опыт</label>
-                <textarea name="experience" rows="3" placeholder="Стажировка в компании X, проекты, фриланс — опишите что делали" class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all resize-none">{{ form.experience.value|default:'' }}</textarea>
+                <label class="text-sm font-semibold text-slate-900">Опыт</label>
+                <textarea name="experience" rows="3" placeholder="Стажировка в компании X, проекты, фриланс — опишите что делали" class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all resize-none">{{ form.experience.value|default:'' }}</textarea>
             </div>
 
             <div>
-                <label class="text-sm font-semibold text-gray-900">Языки</label>
+                <label class="text-sm font-semibold text-slate-900">Языки</label>
                 <input type="text" name="languages" value="{{ form.languages.value|default:'' }}" placeholder="Узбекский — родной, Русский — свободно, Английский — B2"
-                       class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all">
+                       class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
             </div>
         </div>
 
-        <div class="bg-white rounded-xl border border-gray-100 p-6 space-y-5">
-            <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Контакты и ссылки</h2>
+        <div class="bg-white rounded-xl border border-slate-100 p-6 space-y-5">
+            <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Контакты и ссылки</h2>
 
             <div>
-                <label class="text-sm font-semibold text-gray-900">Telegram</label>
+                <label class="text-sm font-semibold text-slate-900">Telegram</label>
                 <input type="url" name="telegram" value="{{ form.telegram.value|default:'' }}" placeholder="https://t.me/username"
-                       class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all">
+                       class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
             </div>
 
             <div>
-                <label class="text-sm font-semibold text-gray-900">LinkedIn</label>
+                <label class="text-sm font-semibold text-slate-900">LinkedIn</label>
                 <input type="url" name="linkedin" value="{{ form.linkedin.value|default:'' }}" placeholder="https://linkedin.com/in/username"
-                       class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all">
+                       class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
             </div>
 
             <div>
-                <label class="text-sm font-semibold text-gray-900">GitHub</label>
+                <label class="text-sm font-semibold text-slate-900">GitHub</label>
                 <input type="url" name="github" value="{{ form.github.value|default:'' }}" placeholder="https://github.com/username"
-                       class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all">
+                       class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
             </div>
 
             <div>
-                <label class="text-sm font-semibold text-gray-900">Портфолио / Сайт</label>
+                <label class="text-sm font-semibold text-slate-900">Портфолио / Сайт</label>
                 <input type="url" name="portfolio" value="{{ form.portfolio.value|default:'' }}" placeholder="https://your-site.com"
-                       class="mt-1.5 w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all">
+                       class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
             </div>
         </div>
 
         <div class="flex items-center justify-end gap-3">
-            <a href="{% url 'student_dashboard' %}" class="px-5 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">Отмена</a>
-            <button type="submit" class="px-6 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors shadow-sm">
+            <a href="{% url 'student_dashboard' %}" class="px-5 py-2.5 text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors">Отмена</a>
+            <button type="submit" class="px-6 py-2.5 bg-gradient-to-br from-teal-500 to-teal-600 text-white text-sm font-semibold rounded-lg hover:from-teal-600 hover:to-teal-700 transition-all shadow-teal">
                 Сохранить
             </button>
         </div>

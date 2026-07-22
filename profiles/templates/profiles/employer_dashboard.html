@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="max-w-5xl mx-auto">
-    <h1 class="text-2xl font-bold text-gray-900 tracking-tight mb-6">Панель работодателя</h1>
+    <h1 class="font-display text-2xl font-bold text-slate-900 tracking-tight mb-6">Панель работодателя</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         {% include "components/stat_card.html" with label="Активные вакансии" value=total_vacancies %}
@@ -12,10 +12,10 @@
         {% include "components/stat_card.html" with label="Всего откликов" value=total_applications %}
     </div>
 
-    <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+    <div class="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">Мои вакансии</h2>
-            <a href="{% url 'vacancy_create' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors shadow-sm">
+            <h2 class="text-lg font-semibold text-slate-900">Мои вакансии</h2>
+            <a href="{% url 'vacancy_create' %}" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-br from-teal-500 to-teal-600 text-white text-sm font-semibold rounded-xl hover:from-teal-600 hover:to-teal-700 transition-all shadow-teal">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Создать
             </a>
@@ -23,23 +23,23 @@
         {% if vacancies %}
             <div class="space-y-3">
                 {% for vacancy in vacancies %}
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2">
-                                <p class="font-medium text-gray-900 truncate">{{ vacancy.title }}</p>
+                                <p class="font-medium text-slate-900 truncate">{{ vacancy.title }}</p>
                                 {% if not vacancy.is_active %}
-                                    <span class="text-xs px-2 py-0.5 bg-gray-200 text-gray-600 rounded-lg">Черновик</span>
+                                    <span class="text-xs px-2 py-0.5 bg-slate-200 text-slate-600 rounded-lg">Черновик</span>
                                 {% endif %}
                             </div>
-                            <p class="text-xs text-gray-500 mt-1">
+                            <p class="text-xs text-slate-500 mt-1">
                                 {{ vacancy.applications.count }} откликов · {{ vacancy.created_at|duration_from }}
                             </p>
                         </div>
                         <div class="flex items-center gap-2 ml-4">
-                            <a href="{% url 'employer_applications' pk=vacancy.pk %}" class="px-4 py-1.5 text-sm font-medium text-violet-600 hover:bg-violet-50 rounded-lg transition-colors">
+                            <a href="{% url 'employer_applications' pk=vacancy.pk %}" class="px-4 py-1.5 text-sm font-medium text-teal-600 hover:bg-teal-50 rounded-lg transition-colors">
                                 Отклики ({{ vacancy.applications.count }})
                             </a>
-                            <a href="{% url 'vacancy_update' pk=vacancy.pk %}" class="px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
+                            <a href="{% url 'vacancy_update' pk=vacancy.pk %}" class="px-3 py-1.5 text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
                                 Ред.
                             </a>
                         </div>

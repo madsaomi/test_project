@@ -5,28 +5,28 @@
 {% block content %}
 <div class="max-w-4xl mx-auto">
     <div class="flex items-center gap-3 mb-8">
-        <h1 class="text-2xl font-bold text-gray-900">Мои отклики</h1>
-        <span class="text-sm text-gray-400">· {{ applications.count }}</span>
+        <h1 class="font-display text-2xl font-bold text-slate-900">Мои отклики</h1>
+        <span class="text-sm text-slate-400">· {{ applications.count }}</span>
     </div>
 
     {% if applications %}
         <div class="space-y-2">
             {% for app in applications %}
-                <div class="bg-white rounded-xl border border-gray-100 p-4 hover:border-gray-200 transition-colors">
+                <div class="bg-white rounded-xl border border-slate-100 p-4 hover:border-slate-200 transition-colors">
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 text-sm font-semibold text-gray-600">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0 text-sm font-semibold text-slate-600">
                             {{ app.vacancy.employer.company_name|first }}
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-3">
-                                <a href="{% url 'vacancy_detail' pk=app.vacancy.id %}" class="font-medium text-gray-900 hover:text-gray-600 transition-colors">{{ app.vacancy.title }}</a>
+                                <a href="{% url 'vacancy_detail' pk=app.vacancy.id %}" class="font-medium text-slate-900 hover:text-slate-600 transition-colors">{{ app.vacancy.title }}</a>
                                 {% include "components/badge.html" with status=app.status label=app.get_status_display %}
                             </div>
-                            <div class="text-sm text-gray-500 mt-1">
+                            <div class="text-sm text-slate-500 mt-1">
                                 {{ app.vacancy.employer.company_name }} · {{ app.created_at|date:"d.m.Y" }}
                             </div>
                             <div class="flex items-center gap-2 mt-3">
-                                <a href="{% url 'send_message' application_pk=app.id %}" class="px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
+                                <a href="{% url 'send_message' application_pk=app.id %}" class="px-3 py-1.5 text-sm font-medium text-slate-500 hover:text-slate-700 hover:bg-slate-50 rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
                                     Чат
                                 </a>
                             </div>
@@ -36,7 +36,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <div class="bg-white rounded-xl border border-gray-100 p-8">
+        <div class="bg-white rounded-xl border border-slate-100 p-8">
             {% include "components/empty_state.html" with title="Нет откликов" description="Найдите подходящую стажировку и отправьте отклик" action_url="/vacancies/" action_text="Смотреть стажировки" %}
         </div>
     {% endif %}

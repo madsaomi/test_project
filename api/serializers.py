@@ -38,22 +38,25 @@ class RegisterSerializer(serializers.ModelSerializer):
 class StudentProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
     first_name = serializers.CharField(source="user.first_name", read_only=True)
+    last_name = serializers.CharField(source="user.last_name", read_only=True)
 
     class Meta:
         model = StudentProfile
         fields = (
-            "id", "email", "first_name", "city", "resume", "resume_text",
+            "id", "email", "first_name", "last_name", "city", "resume", "resume_text",
             "skills", "education", "experience", "telegram", "linkedin",
+            "github", "portfolio", "desired_position", "languages",
         )
 
 
 class EmployerProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
+    first_name = serializers.CharField(source="user.first_name", read_only=True)
 
     class Meta:
         model = EmployerProfile
         fields = (
-            "id", "email", "company_name", "company_description",
+            "id", "email", "first_name", "company_name", "company_description",
             "company_logo", "website",
         )
 
@@ -83,13 +86,21 @@ class VacancyDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vacancy
-        fields = "__all__"
+        fields = (
+            "id", "title", "description", "requirements", "conditions",
+            "salary", "city", "work_type", "category", "employer",
+            "is_active", "views_count", "created_at", "updated_at",
+        )
+        read_only_fields = ("id", "views_count", "created_at", "updated_at")
 
 
 class VacancyCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vacancy
-        exclude = ("employer", "views_count")
+        fields = (
+            "title", "description", "requirements", "conditions",
+            "salary", "city", "work_type", "category", "is_active",
+        )
 
 
 class ApplicationSerializer(serializers.ModelSerializer):

@@ -1,7 +1,5 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
@@ -54,6 +52,8 @@ class VacancyListAV(generics.ListAPIView):
     permission_classes = (permissions.AllowAny,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = VacancyFilter
+    ordering_fields = ["created_at", "views_count", "salary"]
+    ordering = ["-created_at"]
 
 
 class VacancyDetailAV(generics.RetrieveAPIView):
@@ -80,9 +80,18 @@ class VacancyCreateAV(generics.CreateAPIView):
 
 
 class VacancyUpdateAV(generics.UpdateAPIView):
-    queryset = Vacancy.objects.all()
     serializer_class = VacancyCreateSerializer
     permission_classes = (permissions.IsAuthenticated, IsEmployer, IsVacancyOwner)
+
+    def get_queryset(self):
+        return Vacancy.objects.filter(employer__user=self.request.user)
+
+
+class VacancyDeleteAV(generics.DestroyAPIView):
+    permission_classes = (permissions.IsAuthenticated, IsEmployer, IsVacancyOwner)
+
+    def get_queryset(self):
+        return Vacancy.objects.filter(employer__user=self.request.user)
 
 
 # --- Profiles ---
@@ -144,6 +153,18 @@ class EmployerApplicationsAV(generics.ListAPIView):
 
 
 class UpdateApplicationStatusAV(generics.UpdateAPIView):
-    queryset = Application.objects.all()
     serializer_class = ApplicationStatusSerializer
     permission_classes = (permissions.IsAuthenticated, IsEmployer, IsVacancyOwner)
+
+    def get_queryset(self):
+        return Application.objects.filter(vacancy__employer__user=self.request.user)
+
+
+class ApplicationDeleteAV(generics.DestroyAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == "student":
+            return Application.objects.filter(student__user=user)
+        return Application.objects.filter(vacancy__employer__user=user)

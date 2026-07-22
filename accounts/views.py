@@ -9,4 +9,6 @@ class DashboardRedirectView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         if request.user.role == "student":
             return redirect("student_dashboard")
-        return redirect("employer_dashboard")
+        elif request.user.role == "employer":
+            return redirect("employer_dashboard")
+        return redirect("home")

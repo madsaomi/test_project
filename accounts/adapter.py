@@ -17,7 +17,6 @@ class CustomSignupForm(BaseSignupForm):
 
     def signup(self, request, user):
         user.role = self.cleaned_data["role"]
-        user.username = user.email.split("@")[0]
         user.save()
 
 

@@ -229,8 +229,8 @@ EMAIL_BACKEND = env.str("EMAIL_BACKEND", "django.core.mail.backends.console.Emai
 
 # CSP
 CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = ("'self'", "https://cdn.tailwindcss.com", "https://cdn.jsdelivr.net", "https://unpkg.com", "'unsafe-inline'")
-CSP_STYLE_SRC = ("'self'", "https://cdn.tailwindcss.com", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com", "'unsafe-inline'")
+CSP_SCRIPT_SRC = ("'self'", "https://cdn.jsdelivr.net", "https://unpkg.com")
+CSP_STYLE_SRC = ("'self'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com", "'unsafe-inline'")
 CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")
 CSP_IMG_SRC = ("'self'", "https:", "data:")
 CSP_CONNECT_SRC = ("'self'", "ws:", "wss:")

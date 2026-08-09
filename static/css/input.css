@@ -1,3 +1,66 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        background-color: #FAFBFC;
+        color: #0F172A;
+    }
+}
+
+
+/* ============================================
+   Кастомные классы StudCareer
+   ============================================ */
+
+/* Signature: Gradient Border Card */
+.card-gradient {
+    position: relative;
+    background: #fff;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+.card-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1rem;
+    padding: 1px;
+    background: linear-gradient(135deg, #0D9488, #14B8A6, #99F6E4);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* Signature: Mesh Pattern */
+.mesh-pattern {
+    background-image:
+        radial-gradient(at 40% 20%, rgba(13,148,136,0.08) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, rgba(245,158,11,0.06) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, rgba(20,184,166,0.05) 0px, transparent 50%),
+        radial-gradient(at 80% 50%, rgba(13,148,136,0.04) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(245,158,11,0.04) 0px, transparent 50%);
+}
+
+/* Skeleton shimmer */
+.skeleton {
+    background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 0.5rem;
+}
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    html { scroll-behavior: auto; }
+}

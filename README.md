@@ -43,6 +43,9 @@ Schema (OpenAPI): http://localhost:8000/api/schema/
 # Установка pre-commit hooks
 pre-commit install
 
+# Сборка Tailwind (после правки шаблонов)
+tailwindcss -i static/css/input.css -o static/css/app.css --minify
+
 # Linting
 ruff check .
 ruff format .

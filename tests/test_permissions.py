@@ -33,10 +33,15 @@ class TestAPIPermissions:
         assert response.status_code == 201
 
     def test_employer_cannot_update_others_vacancy(self, api_client, vacancy, employer_user, employer_profile):
+        from django.contrib.auth import get_user_model
         from profiles.models import EmployerProfile
+        other_user = get_user_model().objects.create_user(
+            email="other@test.com",
+            password="testpass123",
+            role="employer",
+        )
         other_employer = EmployerProfile.objects.create(
-            user__email="other@test.com",
-            user__role="employer",
+            user=other_user,
             company_name="Other",
         )
         api_client.force_authenticate(user=other_employer.user)
@@ -62,4 +67,4 @@ class TestAPIPermissions:
         url = reverse("api_create_application")
         data = {"vacancy": str(vacancy.pk)}
         response = api_client.post(url, data, format="json")
-        assert response.status_code == 400
+        assert response.status_code == 403

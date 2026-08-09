@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
+from django.db.models import F
 
 from .serializers import (
     RegisterSerializer, UserSerializer, StudentProfileSerializer,
@@ -62,6 +63,13 @@ class VacancyDetailAV(generics.RetrieveAPIView):
     )
     serializer_class = VacancyDetailSerializer
     permission_classes = (permissions.AllowAny,)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        Vacancy.objects.filter(pk=instance.pk).update(views_count=F("views_count") + 1)
+        instance.views_count += 1
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 
 class CategoryListAV(generics.ListAPIView):

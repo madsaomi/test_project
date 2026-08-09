@@ -3,9 +3,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages as django_messages
 from django.http import Http404
-from django.db.models import Q, Count
+from django.db.models import Q, Count, OuterRef, Subquery
 from .models import Conversation, Message
 from applications.models import Application
+
+last_message = (
+    Message.objects.filter(conversation=OuterRef("pk"))
+    .order_by("-created_at")
+)
 
 
 class InboxView(LoginRequiredMixin, ListView):
@@ -14,7 +19,7 @@ class InboxView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        return Conversation.objects.filter(
+        conversations = Conversation.objects.filter(
             Q(application__vacancy__employer__user=user) |
             Q(application__student__user=user)
         ).annotate(
@@ -22,7 +27,7 @@ class InboxView(LoginRequiredMixin, ListView):
                 "messages",
                 filter=Q(messages__is_read=False) & ~Q(messages__sender=user),
             ),
-            last_message_text=Count("messages"),
+            last_message_text=Subquery(last_message.values("text")[:1]),
         ).select_related(
             "application", "application__vacancy",
             "application__student__user",
@@ -71,22 +76,25 @@ class ConversationView(LoginRequiredMixin, DetailView):
 class SendMessageView(LoginRequiredMixin, View):
     def get(self, request, application_pk):
         application = get_object_or_404(
-            Application, pk=application_pk,
+            Application,
             Q(vacancy__employer__user=request.user) | Q(student__user=request.user),
+            pk=application_pk,
         )
         conversation, _ = Conversation.objects.get_or_create(application=application)
         return redirect("conversation", pk=conversation.pk)
 
     def post(self, request, application_pk):
         application = get_object_or_404(
-            Application, pk=application_pk,
+            Application,
             Q(vacancy__employer__user=request.user) | Q(student__user=request.user),
+            pk=application_pk,
         )
 
         text = request.POST.get("text", "").strip()
         if not text:
             django_messages.error(request, "Сообщение не может быть пустым")
-            return redirect("conversation", pk=Conversation.objects.get(application=application).pk)
+            conversation, _ = Conversation.objects.get_or_create(application=application)
+            return redirect("conversation", pk=conversation.pk)
 
         conversation, _ = Conversation.objects.get_or_create(application=application)
         Message.objects.create(

@@ -51,14 +51,14 @@ class TestDashboardRedirect:
         assert response.status_code == 302
 
     def test_student_redirect(self, api_client, student_user):
-        api_client.force_authenticate(user=student_user)
+        api_client.force_login(user=student_user)
         url = reverse("dashboard_redirect")
         response = api_client.get(url)
         assert response.status_code == 302
         assert "student" in response.url
 
     def test_employer_redirect(self, api_client, employer_user):
-        api_client.force_authenticate(user=employer_user)
+        api_client.force_login(user=employer_user)
         url = reverse("dashboard_redirect")
         response = api_client.get(url)
         assert response.status_code == 302
@@ -68,7 +68,7 @@ class TestDashboardRedirect:
 @pytest.mark.django_db
 class TestStudentDashboard:
     def test_student_dashboard(self, api_client, student_user, student_profile):
-        api_client.force_authenticate(user=student_user)
+        api_client.force_login(user=student_user)
         url = reverse("student_dashboard")
         response = api_client.get(url)
         assert response.status_code == 200
@@ -77,7 +77,7 @@ class TestStudentDashboard:
 @pytest.mark.django_db
 class TestEmployerDashboard:
     def test_employer_dashboard(self, api_client, employer_user, employer_profile):
-        api_client.force_authenticate(user=employer_user)
+        api_client.force_login(user=employer_user)
         url = reverse("employer_dashboard")
         response = api_client.get(url)
         assert response.status_code == 200

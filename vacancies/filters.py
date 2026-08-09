@@ -7,7 +7,10 @@ class VacancyFilter(django_filters.FilterSet):
     category = django_filters.CharFilter(field_name="category__slug", lookup_expr="exact")
     work_type = django_filters.ChoiceFilter(choices=Vacancy.WorkType.choices)
     city = django_filters.CharFilter(lookup_expr="icontains")
-    salary_min = django_filters.NumberFilter(field_name="salary", lookup_expr="icontains")
+    salary_min = django_filters.CharFilter(
+        field_name="salary", lookup_expr="icontains",
+        label="Зарплата содержит",
+    )
 
     class Meta:
         model = Vacancy

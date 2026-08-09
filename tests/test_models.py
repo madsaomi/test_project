@@ -61,6 +61,11 @@ class TestApplicationModel:
 
     def test_unique_together(self, student_profile, vacancy):
         from applications.models import Application
+        Application.objects.create(
+            vacancy=vacancy,
+            student=student_profile,
+            cover_letter="First",
+        )
         with pytest.raises(Exception):
             Application.objects.create(
                 vacancy=vacancy,

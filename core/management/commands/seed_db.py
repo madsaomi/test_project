@@ -124,6 +124,19 @@ class Command(BaseCommand):
             except Exception:
                 pass
 
+        self.stdout.write("Создание админа...")
+        try:
+            User.objects.create_superuser(
+                email="admin@admin.com",
+                password="admin123",
+                role="employer",
+            )
+            self.stdout.write(self.style.SUCCESS(
+                "  Админ создан: admin@admin.com / admin123"
+            ))
+        except Exception:
+            pass
+
         self.stdout.write("Подтверждение email для тестовых аккаунтов...")
         PASSWORD = "password123"
         for user in User.objects.all():

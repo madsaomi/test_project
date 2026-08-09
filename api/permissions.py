@@ -13,4 +13,8 @@ class IsEmployer(BasePermission):
 
 class IsVacancyOwner(BasePermission):
     def has_object_permission(self, request, view, obj):
-        return obj.employer.user == request.user
+        if hasattr(obj, "employer"):
+            owner = obj.employer
+        else:
+            owner = obj.vacancy.employer
+        return owner.user == request.user

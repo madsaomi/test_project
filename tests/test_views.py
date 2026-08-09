@@ -28,6 +28,16 @@ class TestVacancyListView:
         response = api_client.get(url, {"q": "Python"})
         assert response.status_code == 200
 
+    def test_vacancy_list_search_description(self, api_client, vacancy):
+        url = reverse("vacancy_list")
+        response = api_client.get(url, {"q": "developer"})
+        assert vacancy in response.context["vacancies"]
+
+    def test_vacancy_list_search_no_match(self, api_client, vacancy):
+        url = reverse("vacancy_list")
+        response = api_client.get(url, {"q": "zzz-nonexistent"})
+        assert vacancy not in response.context["vacancies"]
+
 
 @pytest.mark.django_db
 class TestVacancyDetailView:

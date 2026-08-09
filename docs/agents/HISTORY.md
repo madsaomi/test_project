@@ -4,6 +4,16 @@
 
 ## Сессии
 
+### 2026-08-09 — полнотекстовый поиск вакансий
+
+**Сделано:** `vacancies/filters.py` — `search_filter` ищет по 5 полям
+(title/description/requirements/conditions/city). На PostgreSQL — `SearchVector` + `SearchRank`
+с ранжированием и tiebreak по дате; на SQLite — OR по `icontains` (тесты зелёные).
+Фильтр используется и в web (`VacancyListView`), и в API (`VacancyFilter`).
+Без схемных миграций — портативно между sqlite/postgres.
+
+**Результат:** 54 теста зелёные. Добавлены тесты поиска по описанию и «нет совпадений».
+
 ### 2026-08-09 — Celery-задачи и email-уведомления
 
 **Сделано:**

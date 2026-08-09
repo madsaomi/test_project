@@ -8,9 +8,9 @@
 
 ## Приоритет 1 — ядро платформы
 
-- `[ ]` **Полнотекстовый поиск вакансий** (`django.contrib.postgres` `SearchVector`) —
-  сейчас только django-filter; поиск — ключевая фича платформы. Elasticsearch не нужен,
-  PG full-text хватает.
+- `[x]` **Полнотекстовый поиск вакансий**: PostgreSQL — `SearchVector`/`SearchRank`
+  по title/description/requirements/conditions/city с ранжированием; SQLite — OR по `icontains`
+  (`vacancies/filters.py`, работает и в web, и в API). Без схемных миграций (портативно).
 - `[x]` **Обновить устаревшие пины** (проверено по PyPI):
   - `djangorestframework`: пин `<3.16`, актуально 3.18 → теперь `<3.19`;
   - `django-filter`: пин `<25`, актуально 26.1 → теперь `<27`;

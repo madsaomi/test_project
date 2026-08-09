@@ -8,7 +8,7 @@
         <p class="text-sm text-slate-500 mt-1">Заполните информацию — это и есть ваше резюме для работодателей</p>
     </div>
 
-    <form method="post" class="space-y-6">
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
         {% csrf_token %}
 
         <div class="bg-white rounded-xl border border-slate-100 p-6 space-y-5">
@@ -41,7 +41,21 @@
         </div>
 
         <div class="bg-white rounded-xl border border-slate-100 p-6 space-y-5">
-            <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Обо мне</h2>
+            <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Резюме</h2>
+
+            <div>
+                <label class="text-sm font-semibold text-slate-900">Файл резюме (PDF)</label>
+                <input type="file" name="resume" accept=".pdf,.doc,.docx"
+                       class="mt-1.5 w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all">
+                {% if form.resume.value %}
+                <p class="mt-1.5 text-xs text-slate-500">
+                    Загружен: <a href="{{ form.resume.value.url }}" class="text-teal-600 hover:text-teal-700" target="_blank">{{ form.resume.value.name }}</a>
+                </p>
+                {% endif %}
+                {% if form.resume.errors %}
+                <p class="mt-1.5 text-xs text-red-500">{{ form.resume.errors.0 }}</p>
+                {% endif %}
+            </div>
 
             <div>
                 <label class="text-sm font-semibold text-slate-900">О себе</label>

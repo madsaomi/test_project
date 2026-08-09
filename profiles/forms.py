@@ -6,7 +6,7 @@ class StudentProfileForm(forms.ModelForm):
     class Meta:
         model = StudentProfile
         fields = (
-            "city", "desired_position", "resume_text", "skills",
+            "city", "desired_position", "resume", "resume_text", "skills",
             "education", "experience", "languages",
             "telegram", "linkedin", "github", "portfolio",
         )

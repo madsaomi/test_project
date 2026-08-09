@@ -18,7 +18,9 @@
 - `[x]` **Первые Celery-задачи + email-уведомления** по событиям (новый отклик/сообщение):
   `core/tasks.py` (`send_new_application_email`, `send_new_message_email`), привязаны во вью
   `ApplyToVacancyView` и `SendMessageView`; без Redis — eager-режим. 52 теста.
-- `[ ]` **Загрузка резюме/CV** студентом (Pillow уже в зависимостях).
+- `[x]` **Загрузка резюме/CV** студентом: поле `StudentProfile.resume` уже было в модели
+  и показывалось работодателю в откликах; добавлено в `StudentProfileForm` и шаблон
+  (`enctype=multipart/form-data`, индикатор загруженного файла).
 
 ## Приоритет 2 — довести до продакшена
 

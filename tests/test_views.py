@@ -91,3 +91,30 @@ class TestEmployerDashboard:
         url = reverse("employer_dashboard")
         response = api_client.get(url)
         assert response.status_code == 200
+
+
+@pytest.mark.django_db
+class TestStudentProfileUpdate:
+    def test_update_without_resume(self, api_client, student_user, student_profile):
+        api_client.force_login(user=student_user)
+        url = reverse("student_profile_update")
+        response = api_client.post(url, {"city": "Tashkent", "first_name": "Иван"}, follow=True)
+        assert response.status_code == 200
+        student_profile.refresh_from_db()
+        assert student_profile.city == "Tashkent"
+
+    def test_upload_resume(self, api_client, student_user, student_profile):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        api_client.force_login(user=student_user)
+        url = reverse("student_profile_update")
+        resume = SimpleUploadedFile(
+            "cv.pdf", b"%PDF-1.4 fake", content_type="application/pdf"
+        )
+        response = api_client.post(
+            url, {"city": "Tashkent", "resume": resume}, follow=True
+        )
+        assert response.status_code == 200
+        student_profile.refresh_from_db()
+        assert student_profile.resume.name.endswith("cv.pdf")
+        assert student_profile.resume.read() == b"%PDF-1.4 fake"

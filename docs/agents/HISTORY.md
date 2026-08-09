@@ -4,6 +4,18 @@
 
 ## Сессии
 
+### 2026-08-09 — загрузка резюме (CV) студентом
+
+**Сделано:** поле `StudentProfile.resume` уже существовало (модель, миграции) и
+показывалось работодателю в списке откликов, но не было в форме студента.
+- `profiles/forms.py`: `resume` добавлен в `StudentProfileForm`.
+- `profiles/templates/profiles/student_profile_form.html`: `enctype="multipart/form-data"`,
+  input type=file + ссылка на загруженный файл.
+- `tests/test_views.py`: +2 теста (обновление без файла, загрузка CV).
+- Проверка: работодатель видит резюме — `applications/templates/applications/vacancy_applications.html`.
+
+**Результат:** 56 тестов зелёные. Приоритет 1 закрыт.
+
 ### 2026-08-09 — полнотекстовый поиск вакансий
 
 **Сделано:** `vacancies/filters.py` — `search_filter` ищет по 5 полям

@@ -4,6 +4,29 @@
 
 ## Сессии
 
+### 2026-08-09 — бенчмарк против аналогов и стека 2026
+
+Сравнение с открытыми Django-джоббордами (PeelJobs/opensource-job-portal — 479★,
+Django Job Board, Internshala-подобные) и рекомендациями Django-стека 2026.
+
+**Что подтвердилось хорошо:** Django 5.2 LTS, кастомный User + allauth + Google OAuth,
+RBAC, DRF+JWT+throttling, axes, Docker Compose с nginx/celery/redis, Sentry, CI.
+
+**Устаревшие пины (сверено с PyPI):**
+- `djangorestframework` `<3.16` → актуально 3.18;
+- `django-filter` `<25` → актуально 26.1;
+- `django-csp` `<4` → держим 3.x из-за legacy `CSP_*`; миграция на `CONTENT_SECURITY_POLICY` снимет пин.
+
+**Главные пробелы vs аналоги:** нет полнотекстового поиска (у PeelJobs — Elasticsearch;
+минимум — Postgres `SearchVector`), нет ни одной Celery-задачи при настроенном брокере,
+нет email-уведомлений, нет загрузки CV, SMTP по умолчанию console при обязательной
+верификации email, нет i18n (только русский).
+
+**Инженерные замечания:** дублирование зависимостей (`pyproject.toml` + `requirements.txt`),
+один `settings.py` вместо модульных, `check --deploy` не в CI, нет HTTPS в compose.
+
+Итог — приоритизированный план в `ROADMAP.md` (Приоритет 1–2).
+
 ### 2026-08-09 — frontend: настоящая сборка Tailwind вместо CDN
 
 **Сделано:**

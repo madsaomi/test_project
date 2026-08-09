@@ -3,9 +3,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages as django_messages
 from django.http import Http404
+from django.urls import reverse
 from django.db.models import Q, Count, OuterRef, Subquery
 from .models import Conversation, Message
 from applications.models import Application
+from core.tasks import send_new_message_email
 
 last_message = (
     Message.objects.filter(conversation=OuterRef("pk"))
@@ -97,9 +99,18 @@ class SendMessageView(LoginRequiredMixin, View):
             return redirect("conversation", pk=conversation.pk)
 
         conversation, _ = Conversation.objects.get_or_create(application=application)
-        Message.objects.create(
+        message = Message.objects.create(
             conversation=conversation,
             sender=request.user,
             text=text[:5000],
         )
+        recipient = (
+            application.vacancy.employer.user
+            if request.user != application.vacancy.employer.user
+            else application.student.user
+        )
+        conversation_url = self.request.build_absolute_uri(
+            reverse("conversation", kwargs={"pk": conversation.pk})
+        )
+        send_new_message_email.delay(message.pk, recipient.email, conversation_url)
         return redirect("conversation", pk=conversation.pk)

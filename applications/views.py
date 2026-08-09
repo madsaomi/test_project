@@ -3,11 +3,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect
 from django.db import IntegrityError
+from django.urls import reverse
 from django.views import View
 from .models import Application
 from .forms import ApplicationForm
 from vacancies.models import Vacancy
 from profiles.models import StudentProfile
+from core.tasks import send_new_application_email
 
 
 class ApplyToVacancyView(LoginRequiredMixin, View):
@@ -22,10 +24,16 @@ class ApplyToVacancyView(LoginRequiredMixin, View):
 
         if form.is_valid():
             try:
-                Application.objects.create(
+                application = Application.objects.create(
                     vacancy=vacancy,
                     student=student,
                     cover_letter=form.cleaned_data["cover_letter"],
+                )
+                applications_url = self.request.build_absolute_uri(
+                    reverse("employer_applications", kwargs={"pk": vacancy.pk})
+                )
+                send_new_application_email.delay(
+                    application.pk, vacancy.employer.user.email, applications_url
                 )
                 messages.success(request, "Отклик отправлен!")
             except IntegrityError:

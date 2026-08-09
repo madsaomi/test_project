@@ -4,6 +4,18 @@
 
 ## Сессии
 
+### 2026-08-09 — Celery-задачи и email-уведомления
+
+**Сделано:**
+- `core/tasks.py`: `send_new_application_email`, `send_new_message_email` (shared_task, `send_mail`).
+- Привязка: `ApplyToVacancyView` → письмо работодателю; `SendMessageView` → письмо второй стороне
+  (в URL передаются `employer_applications` / `conversation`).
+- `config/settings.py`: без `REDIS_URL` включается `CELERY_TASK_ALWAYS_EAGER` — задачи выполняются
+  синхронно (локальная разработка и тесты).
+- `tests/test_tasks.py`: 4 теста (задачи напрямую + через вью), почта в `mail.outbox`.
+
+**Результат:** 52 теста зелёные.
+
 ### 2026-08-09 — обновление устаревших пинов + миграция CSP на django-csp 4
 
 **Сделано:**

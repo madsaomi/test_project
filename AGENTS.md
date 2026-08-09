@@ -22,6 +22,7 @@
 - `DATABASE_URL` — дефолт `sqlite:///db.sqlite3`; CI и docker-compose используют postgres.
 - `REDIS_URL` — задан → redis-кэш, channels и celery; иначе locmem.
 - **ГОТЧА system checks:** без Redis (locmem) `migrate`/`makemigrations` падают с `django_ratelimit.E003`. Локально добавляй `--skip-checks` к manage.py-командам.
+- Celery: `core/tasks.py` — задачи email-уведомлений (`send_new_application_email`, `send_new_message_email`). Без `REDIS_URL` включён eager-режим (`CELERY_TASK_ALWAYS_EAGER`) — задачи выполняются синхронно, в тестах почта идёт в outbox.
 
 ## Архитектура
 

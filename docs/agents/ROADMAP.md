@@ -15,8 +15,9 @@
   - `djangorestframework`: пин `<3.16`, актуально 3.18 → теперь `<3.19`;
   - `django-filter`: пин `<25`, актуально 26.1 → теперь `<27`;
   - `django-csp`: legacy `CSP_*` → `CONTENT_SECURITY_POLICY`, пин `<4` → `<5` (установлен 4.0).
-- `[ ]` **Первые Celery-задачи + email-уведомления** по событиям (новый отклик/сообщение):
-  `config/celery.py` и Redis готовы, задач нет.
+- `[x]` **Первые Celery-задачи + email-уведомления** по событиям (новый отклик/сообщение):
+  `core/tasks.py` (`send_new_application_email`, `send_new_message_email`), привязаны во вью
+  `ApplyToVacancyView` и `SendMessageView`; без Redis — eager-режим. 52 теста.
 - `[ ]` **Загрузка резюме/CV** студентом (Pillow уже в зависимостях).
 
 ## Приоритет 2 — довести до продакшена

@@ -261,6 +261,9 @@ else:
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
         }
     }
+    # Без Redis задачи Celery выполняются синхронно (локальная разработка, тесты)
+    CELERY_TASK_ALWAYS_EAGER = True
+    CELERY_TASK_EAGER_PROPAGATES = True
 
 # Security headers for production
 if not DEBUG:

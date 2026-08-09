@@ -4,6 +4,16 @@
 
 ## Сессии
 
+### 2026-08-09 — обновление устаревших пинов + миграция CSP на django-csp 4
+
+**Сделано:**
+- Пины в `pyproject.toml` и `requirements.txt`: `djangorestframework` `<3.16` → `<3.19`
+  (работает на 3.18), `django-filter` `<25` → `<27` (26.1), `django-csp` `<4` → `<5`.
+- `config/settings.py`: legacy `CSP_*` → `CONTENT_SECURITY_POLICY` (dict-формат django-csp 4.x);
+  установлен django-csp 4.0.
+
+**Результат:** 48 тестов зелёные, страницы отдают CSP-заголовок. Убрана гоча `csp.E001` из AGENTS.md.
+
 ### 2026-08-09 — бенчмарк против аналогов и стека 2026
 
 Сравнение с открытыми Django-джоббордами (PeelJobs/opensource-job-portal — 479★,

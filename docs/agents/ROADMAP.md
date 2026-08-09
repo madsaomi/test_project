@@ -11,10 +11,10 @@
 - `[ ]` **Полнотекстовый поиск вакансий** (`django.contrib.postgres` `SearchVector`) —
   сейчас только django-filter; поиск — ключевая фича платформы. Elasticsearch не нужен,
   PG full-text хватает.
-- `[ ]` **Обновить устаревшие пины** (проверено по PyPI):
-  - `djangorestframework`: пин `<3.16`, актуально 3.18;
-  - `django-filter`: пин `<25`, актуально 26.1;
-  - `django-csp`: пин `<4` из-за legacy `CSP_*` — перейти на `CONTENT_SECURITY_POLICY` и поднять до 4.x.
+- `[x]` **Обновить устаревшие пины** (проверено по PyPI):
+  - `djangorestframework`: пин `<3.16`, актуально 3.18 → теперь `<3.19`;
+  - `django-filter`: пин `<25`, актуально 26.1 → теперь `<27`;
+  - `django-csp`: legacy `CSP_*` → `CONTENT_SECURITY_POLICY`, пин `<4` → `<5` (установлен 4.0).
 - `[ ]` **Первые Celery-задачи + email-уведомления** по событиям (новый отклик/сообщение):
   `config/celery.py` и Redis готовы, задач нет.
 - `[ ]` **Загрузка резюме/CV** студентом (Pillow уже в зависимостях).

@@ -227,13 +227,17 @@ CORS_ALLOW_CREDENTIALS = True
 # Email
 EMAIL_BACKEND = env.str("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
 
-# CSP
-CSP_DEFAULT_SRC = ("'self'",)
-CSP_SCRIPT_SRC = ("'self'", "https://cdn.jsdelivr.net", "https://unpkg.com")
-CSP_STYLE_SRC = ("'self'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com", "'unsafe-inline'")
-CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")
-CSP_IMG_SRC = ("'self'", "https:", "data:")
-CSP_CONNECT_SRC = ("'self'", "ws:", "wss:")
+# CSP (django-csp 4.x)
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "default-src": ("'self'",),
+        "script-src": ("'self'", "https://cdn.jsdelivr.net", "https://unpkg.com"),
+        "style-src": ("'self'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com", "'unsafe-inline'"),
+        "font-src": ("'self'", "https://fonts.gstatic.com"),
+        "img-src": ("'self'", "https:", "data:"),
+        "connect-src": ("'self'", "ws:", "wss:"),
+    },
+}
 
 # drf-spectacular
 SPECTACULAR_SETTINGS = {

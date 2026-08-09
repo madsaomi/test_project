@@ -21,14 +21,14 @@
 - `DJANGO_SECRET_KEY` — ОБЯЗАТЕЛЕН, дефолта нет; `DJANGO_DEBUG` по умолчанию `false`.
 - `DATABASE_URL` — дефолт `sqlite:///db.sqlite3`; CI и docker-compose используют postgres.
 - `REDIS_URL` — задан → redis-кэш, channels и celery; иначе locmem.
-- **ГОТЧА system checks:** без Redis (locmem) `migrate`/`makemigrations` падают с `django_ratelimit.E003`; а django-csp>=4 даёт `csp.E001` (settings используют legacy `CSP_*`, работает только с `django-csp<4` — пин проекта). Локально добавляй `--skip-checks` к manage.py-командам.
+- **ГОТЧА system checks:** без Redis (locmem) `migrate`/`makemigrations` падают с `django_ratelimit.E003`. Локально добавляй `--skip-checks` к manage.py-командам.
 
 ## Архитектура
 
 - `config/` — settings/asgi/wsgi/celery/urls; `ASGI_APPLICATION = config.asgi.application` (channels).
 - Приложения: `accounts` (кастомный User), `profiles` (StudentProfile/EmployerProfile), `vacancies` (Vacancy/Category, фильтры в `vacancies/filters.py`), `applications` (Application), `messaging` (Conversation/Message), `notifications` (WebSocket-consumers), `api` (DRF + JWT + drf-spectacular), `core` (seed_db, templatetags).
 - API: auth = simplejwt + Session; permissions в `api/permissions.py` (`IsStudent`, `IsEmployer`, `IsVacancyOwner`); throttle rates (`anon 30/min`, `user 120/min`, `apply 10/min`).
-- Шаблоны: глобальный `templates/` + `templates/<app>/`; crispy-tailwind, htmx, Alpine.js. Tailwind — **собранная статика** `static/css/app.css` (без CDN-скрипта); Google Fonts через `<link>`. CSP: `unsafe-inline` только в style-src (Alpine-переходы), в script-src нет.
+- Шаблоны: глобальный `templates/` + `templates/<app>/`; crispy-tailwind, htmx, Alpine.js. Tailwind — **собранная статика** `static/css/app.css` (без CDN-скрипта); Google Fonts через `<link>`. CSP (django-csp 4, формат `CONTENT_SECURITY_POLICY`): `unsafe-inline` только в style-src (Alpine-переходы), в script-src нет.
 
 ## Модель User (accounts/models.py) — ключевое
 

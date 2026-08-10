@@ -5,6 +5,11 @@ from rest_framework.test import APIClient
 User = get_user_model()
 
 
+@pytest.fixture(autouse=True)
+def _isolated_media(tmp_path, settings):
+    settings.MEDIA_ROOT = tmp_path / "media"
+
+
 @pytest.fixture
 def api_client():
     return APIClient()

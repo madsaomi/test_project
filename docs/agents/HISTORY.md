@@ -4,6 +4,37 @@
 
 ## Сессии
 
+### 2026-08-10 — продакшен-полировка: SMTP, CI, покрытие 82%, тесты messaging/notifications, uv
+
+**Сделано:**
+- **SMTP-бэкенд** (`config/settings.py`): завеса `EMAIL_BACKEND`/`EMAIL_HOST`/`EMAIL_PORT`/
+  `EMAIL_HOST_USER`/`EMAIL_HOST_PASSWORD`/`EMAIL_USE_TLS`/`EMAIL_USE_SSL`/
+  `DEFAULT_FROM_EMAIL` через environs; default — console (dev/тесты). `.env.example` дополнен.
+- **CI** (`.github/workflows/ci.yml`): добавлены шаги `check --deploy` и
+  `makemigrations --check --dry-run`; переход на uv (`astral-sh/setup-uv@v6`,
+  `uv venv` + `uv pip install -e ".[dev]"`, `uvx ruff`).
+- **Покрытие:** добавлен `messaging` в `[tool.coverage.run].source` в `pyproject.toml`;
+  итог **82%** (порог 60%). Тестов стало **73**.
+- **Тесты messaging** (`tests/test_messaging.py`, 13): модель, inbox, отметки прочитанного,
+  доступ участников (404 для посторонних), создание сообщений.
+  **Найден и исправлен реальный баг:** в `InboxView.get_queryset()` отсутствовал `return conversations` —
+  вью возвращал `None` и падал (вью не была покрыта тестами).
+- **Тесты notifications** (`tests/test_notifications.py`, 4, async через
+  `WebsocketCommunicator` + `pytest.mark.asyncio`): подключение анонима/аутентифицированного,
+  получение уведомления из группы, rate-limit.
+  **Исправление окружения:** `CHANNEL_LAYERS` теперь падает на `InMemoryChannelLayer`,
+  если нет `REDIS_URL` (ранее всегда требовал Redis даже локально).
+- **Консолидация зависимостей:** `requirements.txt` удалён; единственный источник —
+  `pyproject.toml` (+`[build-system]` setuptools, discovery packages через
+  `[tool.setuptools.packages.find]`). Обновлены `Dockerfile` (`pip install .`),
+  `run.sh` (`pip install -e ".[dev]"`), `.dockerignore`.
+- **Флейк-фикс:** авто-фикстура `_isolated_media` в `tests/conftest.py` — `MEDIA_ROOT`
+  в каждый тест переносится во временную папку (левые файлы в `media/` больше не
+  вызывают коллизии имён при загрузке резюме).
+
+**Результат:** `pytest tests/ -q` — **73 passed**, `makemigrations --check --dry-run` —
+No changes detected, покрытие 82%.
+
 ### 2026-08-09 — загрузка резюме (CV) студентом
 
 **Сделано:** поле `StudentProfile.resume` уже существовало (модель, миграции) и
@@ -115,6 +146,12 @@ RBAC, DRF+JWT+throttling, axes, Docker Compose с nginx/celery/redis, Sentry, CI
 
 | Коммит | Тип | Суть |
 |--------|-----|------|
+| `5c12bb5` | feat | загрузка резюме/CV в форму студента (56→73 теста) |
+| `33c6d98` | feat | полнотекстовый поиск вакансий (SearchVector/icontains) |
+| `36483ad` | feat | Celery email-уведомления по откликам/сообщениям (52 теста) |
+| `e286d66` | fix | обновлены устаревшие пины, CSP на django-csp 4 |
+| `6ce1892` | docs | бенчмарк против аналогов и стека 2026, приоритизированный роадмап |
+| `3693b87` | feat | настоящая сборка Tailwind — app.css вместо CDN |
 | `430ad96` | fix | enable test suite on Django 5.2 — UserManager, миграции, фиксы тестов, AGENTS.md |
 | `1ee7774` | test | comprehensive test suite — 40+ тестов (models, API, views, permissions) |
 | `6c59fed` | feat | редизайн фронтенда: teal-палитра, Plus Jakarta Sans, mesh-паттерн, обновлены все 30 шаблонов |

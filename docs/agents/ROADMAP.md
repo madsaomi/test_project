@@ -24,32 +24,31 @@
 
 ## Приоритет 2 — довести до продакшена
 
-- `[ ]` **SMTP-бэкенд**: при `ACCOUNT_EMAIL_VERIFICATION = "mandatory"` и console-бэкенде
-  регистрации в проде застрянут на подтверждении email.
-- `[ ]` `python manage.py check --deploy` добавить в CI (сейчас не выполняется).
-- `[ ]` Консолидировать зависимости: одни и те же пины в `pyproject.toml` и
-  `requirements.txt` — оставить один источник (pyproject) и перейти на `uv`.
+- `[x]` **SMTP-бэкенд**: `EMAIL_BACKEND`/`EMAIL_HOST`/`EMAIL_*` через environs,
+  default — console (dev/тесты); без SMTP проде не обойтись при `mandatory`-верификации.
+- `[x]` `python manage.py check --deploy` добавлен в CI (+ `makemigrations --check --dry-run`).
+- `[x]` Консолидировать зависимости: `requirements.txt` удалён, единственный источник —
+  `pyproject.toml`, CI переведён на `uv` (Docker/`run.sh` — pip из pyproject).
 - `[ ]` HTTPS/TLS на nginx (сейчас `SECURE_SSL_REDIRECT=false` и нет certbot).
 - `[ ]` Модульные settings (base/local/production) вместо одного `settings.py`.
 - `[ ]` i18n/l10n: сейчас только русский, без `locale/` (аудитория — Узбекистан).
 
 ## Ближние задачи
 
-- `[x]` Включить полноценный тестовый набор (48 тестов, Django 5.2, `430ad96`).
-- `[ ]` Замерить покрытие и убедиться, что CI проходит порог 60%
-  (`coverage run -m pytest tests/ && coverage report --fail-under=60`).
-- `[ ]` Тесты для `messaging` (диалоги, отметки прочитанного) — сейчас не покрыто.
-- `[ ]` Тесты для `notifications` (WebSocket consumers) — сейчас не покрыто.
+- `[x]` Включить полноценный тестовый набор (73 теста, Django 5.2).
+- `[x]` Покрытие **82%** — порог 60% в CI проходит (`coverage report --fail-under=60`).
+- `[x]` Тесты для `messaging` (диалоги, отметки прочитанного) — 13 тестов;
+  попутно исправлен баг в `InboxView.get_queryset` (не было `return`).
+- `[x]` Тесты для `notifications` (WebSocket consumers) — 4 async-теста.
 - `[ ]` Тесты авторизации (allauth-потоки: регистрация, подтверждение email, Google OAuth).
 
 ## Функциональные задачи
 
 - `[ ]` Отправка уведомлений по событиям (новый отклик, новое сообщение) —
-  потребители в `notifications/consumers.py` есть, но событий нет.
-- `[ ]` Celery-задачи: `config/celery.py` настроен, но ни одной `shared_task` нет
-  (например, фоновая отправка email-уведомлений).
+  потребители в `notifications/consumers.py` есть, но событий нет
+  (события можно слать в WebSocket-группу `user_{id}` через Celery-задачи).
 - `[ ]` Проверить email-потоки при `ACCOUNT_EMAIL_VERIFICATION = "mandatory"`
-  (сейчас бэкенд — console).
+  (SMTP-настройки добавлены, нужен реальный бэкенд в проде).
 - `[ ]` Employer-сценарий по вакансиям: полный CRUD через UI и API-эквиваленты.
 
 ## Инфраструктура / качество

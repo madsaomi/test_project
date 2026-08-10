@@ -6,12 +6,13 @@
 
 ## Команды
 
-- Тесты: `pytest tests/ -v` (конфиг в `[tool.pytest.ini_options]`, `testpaths=["tests"]`, `DJANGO_SETTINGS_MODULE=config.settings`). Один тест: `pytest tests/test_views.py::TestDashboardRedirect::test_student_redirect`. Весь набор ~26-30 с.
-- Покрытие (CI падает ниже 60%): `coverage run -m pytest tests/ && coverage report --fail-under=60`. Порог и `source` в `[tool.coverage.*]` pyproject.
-- CI (`.github/workflows/ci.yml`): lint (ruff check + format) → migrate + pytest с покрытием → сборка Docker. Триггеры: push в main/develop, PR в main.
+- Тесты: `pytest tests/ -v` (конфиг в `[tool.pytest.ini_options]`, `testpaths=["tests"]`, `DJANGO_SETTINGS_MODULE=config.settings`). Один тест: `pytest tests/test_views.py::TestDashboardRedirect::test_student_redirect`. Весь набор ~30-60 с (73 теста).
+- Покрытие (CI падает ниже 60%): `coverage run -m pytest tests/ && coverage report --fail-under=60`. Порог и `source` в `[tool.coverage.*]` pyproject. Актуально ~82%.
+- CI (`.github/workflows/ci.yml`): lint (`uvx ruff check` + format) → migrate → `check --deploy` → `makemigrations --check --dry-run` → pytest с покрытием → сборка Docker. Триггеры: push в main/develop, PR в main.
 - Lint: `ruff check .`; формат: `ruff format --check .` (line-length 100, кавычки двойные).
 - Миграции: `python manage.py makemigrations`, `python manage.py migrate`. Проверка дрейфа: `makemigrations --check --dry-run`.
 - Сидинг: `python manage.py seed_db` (данные + admin@admin.com; пароль генерится). См. `core/management/commands/seed_db.py`.
+- Зависимости: **единственный источник — `pyproject.toml`** (`requirements.txt` удалён). CI ставит через `uv` (`uv venv .venv && uv pip install -e ".[dev]"`); Docker и `run.sh` — `pip install .` / `pip install -e ".[dev]"`. SMTP-настройки (`EMAIL_HOST`, `EMAIL_*`) — через анвирон, дефолт console.
 - pre-commit: `pre-commit install` (ruff --fix, ruff-format, mypy с django-stubs, mypy исключает tests/).
 - Tailwind (обязательно после правки шаблонов): `/root/.local/bin/tailwind -i static/css/input.css -o static/css/app.css --minify` — standalone v3.4, контент-скан в `tailwind.config.js` (`content: ["./templates/**/*.html"]`). Кастомные классы (`card-gradient`, `mesh-pattern`, `skeleton`, body-фон) — в `input.css`.
 - Git: conventional commits (`feat:`, `fix:`, `test:`, `docs:`), история по-английски.
@@ -43,11 +44,19 @@
 - `conftest.py`: фикстуры `api_client` (DRF `APIClient`), `student_user`/`employer_user` (через `create_user(email, ..., role=...)`), `student_profile`, `employer_profile`, `category`, `vacancy`, `application`.
 - **ГОТЧА:** Django-вью (`tests/test_views.py`) аутентифицируют сессией — `client.force_login(user=...)`; API-вью (`test_api.py`, `test_permissions.py`) — `api_client.force_authenticate(user=...)`. Перепутать нельзя.
 - `test_unique_together` (models): сначала создаётся отклик, потом `pytest.raises(Exception)` на дубликат (IntregrityError ловится во вью).
+- `test_messaging.py` (13) / `test_notifications.py` (4 async, `WebsocketCommunicator`): закрыли messaging и consumers. Готча: websocket-тестам нужен `CHANNEL_LAYERS` без Redis (InMemory задаётся в `config/settings.py` при пустом `REDIS_URL`; в тестах можно override).
 
 ## История / текущее состояние
 
-- **main = `430ad96`** «fix: enable test suite on Django 5.2…» — всё запушено, рабочее дерево чистое. 48 тестов проходят (`pytest tests/ -q`), `makemigrations --check` чистый.
-- История ветки (последние): `1ee7774` тесты (40+), `6c59fed` редизайн фронтенда, `13b86bd` бэкенд-фиксы (N+1, индексы), `5ff507a` CI/CD (ruff, mypy, pre-commit, sentry), `d8c5b4c` Docker, `30b35d3` API (delete, ordering, Swagger, IDOR), `f28b413` security (SECRET_KEY обязателен, CSP, DEBUG=false), `2e20cc9` first commit.
+- **main = `5c12bb5`** (рабочее дерево после сессии 2026-08-10). Локально ветка ушла вперёд от
+  `origin/main` на 7+ незапушенных коммитов. **73 теста проходят** (`pytest tests/ -q`),
+  `makemigrations --check` чистый, покрытие **~82%**.
+- Недавняя история: `5c12bb5` CV-загрузка, `33c6d98` полнотекстовый поиск, `36483ad` Celery email,
+  `e286d66` пины+CSP, `6ce1892` бенчмарк, `3693b87` Tailwind-сборка, `430ad96` тестовый набор, `1ee7774` тесты (40+).
+- Сессия 2026-08-10 (НЕ закоммичено): SMTP-настройки, `check --deploy`+drift-проверка в CI,
+  переход на uv/удаление `requirements.txt`, тесты `messaging` (13) и `notifications` (4),
+  фикс коммуникаций (`messaging/views.py` — не было `return` в `get_queryset`), `CHANNEL_LAYERS`
+  на InMemory без Redis, изоляция `MEDIA_ROOT` в тестах. Покрытие 76% → 82%.
 - В прошлой сессии исправлены реальные баги (всё в `430ad96`):
   - `accounts/models.py`: добавлен `UserManager` — на Django 5.2 `create_user`/`create_superuser` падали без `username`.
   - Новые миграции: `accounts/0002_alter_user_managers`, `applications/0002_alter_application_unique_together_and_more` (`UniqueConstraint(vacancy, student)` вместо `unique_together` — блокирует дубли в БД), `messaging/0002_...` (db_index на `created_at`/`is_read`, `max_length=5000` у `text`).

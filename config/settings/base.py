@@ -5,7 +5,7 @@ from environs import Env
 env = Env()
 env.read_env()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 DEBUG = env.bool("DJANGO_DEBUG", False)
 SECRET_KEY = env.str("DJANGO_SECRET_KEY")
@@ -68,14 +68,12 @@ INSTALLED_APPS = [
     "core",
 ]
 
-if DEBUG:
-    INSTALLED_APPS.append("debug_toolbar")
-
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -85,9 +83,6 @@ MIDDLEWARE = [
     "axes.middleware.AxesMiddleware",
     "csp.middleware.CSPMiddleware",
 ]
-
-if DEBUG:
-    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
 
 ROOT_URLCONF = "config.urls"
 
@@ -123,10 +118,19 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-LANGUAGE_CODE = "ru-RU"
+LANGUAGE_CODE = "ru"
 TIME_ZONE = "Asia/Tashkent"
 USE_I18N = True
+USE_L10N = True
 USE_TZ = True
+
+# Доступные языки (аудитория — Узбекистан)
+LANGUAGES = [
+    ("ru", "Русский"),
+    ("en", "English"),
+    ("uz", "Oʻzbekcha"),
+]
+LOCALE_PATHS = [BASE_DIR / "locale"]
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
@@ -279,18 +283,6 @@ else:
     # Без Redis задачи Celery выполняются синхронно (локальная разработка, тесты)
     CELERY_TASK_ALWAYS_EAGER = True
     CELERY_TASK_EAGER_PROPAGATES = True
-
-# Security headers for production
-if not DEBUG:
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    X_FRAME_OPTIONS = "DENY"
-    SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", False)
-    SECURE_HSTS_SECONDS = 31536000
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    SECURE_HSTS_PRELOAD = True
 
 LOGGING = {
     "version": 1,

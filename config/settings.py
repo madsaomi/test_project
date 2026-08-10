@@ -201,6 +201,7 @@ AXES_COOLOFF_TIME = timedelta(minutes=15)
 AXES_LOCKOUT_TEMPLATE = "account/lockout.html"
 
 # Celery
+REDIS_URL = env.str("REDIS_URL", "")
 CELERY_BROKER_URL = env.str("REDIS_URL", "redis://redis:6379/0")
 CELERY_RESULT_BACKEND = env.str("REDIS_URL", "redis://redis:6379/0")
 CELERY_ACCEPT_CONTENT = ["json"]
@@ -209,12 +210,18 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "Asia/Tashkent"
 
 # Channels
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {"hosts": [env.str("REDIS_URL", "redis://redis:6379/0")]},
-    },
-}
+if REDIS_URL:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {"hosts": [REDIS_URL]},
+        },
+    }
+else:
+    # Без Redis — in-memory слой (локальная разработка, тесты)
+    CHANNEL_LAYERS = {
+        "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"},
+    }
 
 # Crispy
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
@@ -224,8 +231,17 @@ CRISPY_TEMPLATE_PACK = "tailwind"
 CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 CORS_ALLOW_CREDENTIALS = True
 
-# Email
+# Email.
+# В проде задай EMAIL_HOST/EMAIL_PORT/EMAIL_HOST_USER/EMAIL_HOST_PASSWORD/EMAIL_USE_TLS
+# (и EMAIL_BACKEND=smtp). Без них используется console-бэкенд (локальная разработка, тесты).
 EMAIL_BACKEND = env.str("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+EMAIL_HOST = env.str("EMAIL_HOST", "")
+EMAIL_PORT = env.int("EMAIL_PORT", 587)
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", True)
+EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", False)
+DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL", "StudCareer <no-reply@studcareer.uz>")
 
 # CSP (django-csp 4.x)
 CONTENT_SECURITY_POLICY = {
@@ -247,7 +263,6 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
 }
 
-REDIS_URL = env.str("REDIS_URL", "")
 if REDIS_URL:
     CACHES = {
         "default": {

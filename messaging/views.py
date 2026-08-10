@@ -38,6 +38,7 @@ class InboxView(LoginRequiredMixin, ListView):
         ).prefetch_related(
             "messages",
         ).order_by("-updated_at")
+        return conversations
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

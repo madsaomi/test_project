@@ -61,7 +61,11 @@ source "$ACTIVATE"
 
 step "Установка зависимостей"
 pip install --upgrade pip setuptools wheel --quiet
-pip install --only-binary=:all: -r requirements.txt || pip install -r requirements.txt
+# Единственный источник зависимостей — pyproject.toml
+if ! pip install -e ".[dev]"; then
+    echo -e "${RED}Не удалось установить зависимости из pyproject.toml${NC}"
+    exit 1
+fi
 
 step "Миграции"
 python manage.py makemigrations --noinput

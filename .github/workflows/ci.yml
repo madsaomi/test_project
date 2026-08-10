@@ -15,16 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-      - name: Install dependencies
-        run: |
-          pip install ruff
       - name: Ruff check
-        run: ruff check .
+        run: uvx ruff check .
       - name: Ruff format check
-        run: ruff format --check .
+        run: uvx ruff format --check .
 
   test:
     runs-on: ubuntu-latest
@@ -54,28 +51,40 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-          cache: pip
-      - name: Install dependencies
+          enable-cache: true
+      - name: Create venv and install (pyproject единственный источник)
         run: |
-          pip install -r requirements.txt
-          pip install pytest pytest-django pytest-asyncio httpx factory-boy coverage
+          uv venv .venv --python ${{ env.PYTHON_VERSION }}
+          uv pip install --python .venv -e ".[dev]"
       - name: Run migrations
-        run: python manage.py migrate --noinput
+        run: source .venv/bin/activate && python manage.py migrate --noinput
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/studcareer_test
+          DJANGO_SECRET_KEY: test-secret-key-for-ci
+          REDIS_URL: redis://localhost:6379/0
+      - name: Django system checks (deploy)
+        run: source .venv/bin/activate && python manage.py check --deploy
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/studcareer_test
+          DJANGO_SECRET_KEY: test-secret-key-for-ci
+          REDIS_URL: redis://localhost:6379/0
+      - name: Check no migration drift
+        run: source .venv/bin/activate && python manage.py makemigrations --check --dry-run
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/studcareer_test
           DJANGO_SECRET_KEY: test-secret-key-for-ci
           REDIS_URL: redis://localhost:6379/0
       - name: Run tests with coverage
-        run: coverage run -m pytest tests/ -v
+        run: source .venv/bin/activate && coverage run -m pytest tests/ -v
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/studcareer_test
           DJANGO_SECRET_KEY: test-secret-key-for-ci
           REDIS_URL: redis://localhost:6379/0
       - name: Coverage report
-        run: coverage report --fail-under=60
+        run: source .venv/bin/activate && coverage report --fail-under=60
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:

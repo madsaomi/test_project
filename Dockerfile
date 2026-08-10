@@ -10,8 +10,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev gcc && \
     rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+COPY pyproject.toml .
+COPY accounts api applications config core messaging notifications profiles vacancies ./
+# Основные зависимости — только из pyproject.toml (единственный источник)
+RUN pip install --no-cache-dir --prefix=/install .
 
 # Stage 2: Production image
 FROM python:3.12-slim AS production

@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "studcareer"
 version = "0.1.0"
@@ -105,8 +109,13 @@ ignore_missing_imports = true
 DJANGO_SETTINGS_MODULE = "config.settings"
 testpaths = ["tests"]
 
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["accounts*", "api*", "applications*", "config*", "core*", "messaging*", "notifications*", "profiles*", "vacancies*"]
+exclude = ["tests*"]
+
 [tool.coverage.run]
-source = ["accounts", "profiles", "vacancies", "applications", "api", "notifications", "core"]
+source = ["accounts", "profiles", "vacancies", "applications", "api", "notifications", "messaging", "core"]
 
 [tool.coverage.report]
 show_missing = true

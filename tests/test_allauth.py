@@ -8,7 +8,7 @@ from allauth.account.models import EmailAddress
 
 @pytest.mark.django_db
 class TestAllauthSignup:
-    def test_signup_creates_user_and_unverified_email(self, client):
+    def test_signup_creates_user_without_email_verification(self, client):
         url = reverse("account_signup")
         response = client.post(
             url,
@@ -20,9 +20,17 @@ class TestAllauthSignup:
             },
         )
         assert response.status_code == 302
-        assert EmailAddress.objects.filter(
-            email="newuser@example.com", verified=False
-        ).exists()
+        # Верификация email отключена (ACCOUNT_EMAIL_VERIFICATION = "none"):
+        # подтверждающее письмо не отправляется, вход разрешён без подтверждения
+        assert EmailAddress.objects.filter(email="newuser@example.com").exists()
+
+        # Пользователь создан и может войти сразу
+        login_url = reverse("account_login")
+        login_response = client.post(
+            login_url,
+            {"login": "newuser@example.com", "password": "StrongPass123!"},
+        )
+        assert login_response.status_code == 302
 
     def test_signup_password_mismatch_fails(self, client):
         url = reverse("account_signup")

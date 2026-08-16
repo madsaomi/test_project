@@ -12,7 +12,7 @@
 - Lint: `ruff check .`; формат: `ruff format --check .` (line-length 100, кавычки двойные).
 - Миграции: `python manage.py makemigrations`, `python manage.py migrate`. Проверка дрейфа: `makemigrations --check --dry-run`.
 - Сидинг: `python manage.py seed_db` (данные + admin@admin.com; пароль генерится). См. `core/management/commands/seed_db.py`.
-- Зависимости: **единственный источник — `pyproject.toml`** (`requirements.txt` удалён). CI ставит через `uv` (`uv venv .venv && uv pip install -e ".[dev]"`); Docker и `run.sh` — `pip install .` / `pip install -e ".[dev]"`. SMTP-настройки (`EMAIL_HOST`, `EMAIL_*`) — через анвирон, дефолт console.
+- Зависимости: **единственный источник — `pyproject.toml`**; `requirements.txt` — сгенерированное зеркало `[project].dependencies` для удобства (`pip install -r requirements.txt`). CI ставит через `uv` (`uv venv .venv && uv pip install -e ".[dev]"`); Docker и `run.sh` — `pip install .` / `pip install -e ".[dev]"`. SMTP-настройки (`EMAIL_HOST`, `EMAIL_*`) — через анвирон, дефолт console.
 - pre-commit: `pre-commit install` (ruff --fix, ruff-format, mypy с django-stubs, mypy исключает tests/).
 - Tailwind (обязательно после правки шаблонов): `/root/.local/bin/tailwind -i static/css/input.css -o static/css/app.css --minify` — standalone v3.4, контент-скан в `tailwind.config.js` (`content: ["./templates/**/*.html"]`). Кастомные классы (`card-gradient`, `mesh-pattern`, `skeleton`, body-фон) — в `input.css`.
 - Git: conventional commits (`feat:`, `fix:`, `test:`, `docs:`), история по-английски.
@@ -37,7 +37,7 @@
 - `USERNAME_FIELD = "email"`, `REQUIRED_FIELDS = ["role"]`, роли `student`/`employer`.
 - Кастомный `UserManager` (`use_in_migrations=True`): `create_user(email, password=..., role=...)`, `create_superuser(...)` — **аргумент `username` НЕ принимается**.
 - `username` генерится автоматически в `User.save()` (`{email_prefix}_{rand4}`).
-- allauth: логин только по email, `ACCOUNT_EMAIL_VERIFICATION = "mandatory"`, адаптер `accounts.adapter.AccountAdapter`. В `AUTHENTICATION_BACKENDS` axes первый.
+- allauth: логин только по email, `ACCOUNT_EMAIL_VERIFICATION = "none"` (верификация отключена), адаптер `accounts.adapter.AccountAdapter`. В `AUTHENTICATION_BACKENDS` axes первый.
 
 ## Тестирование (tests/)
 

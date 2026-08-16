@@ -11,25 +11,6 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
-# Sentry
-SENTRY_DSN = env.str("SENTRY_DSN", "")
-if SENTRY_DSN:
-    import sentry_sdk
-    from sentry_sdk.integrations.django import DjangoIntegration
-    from sentry_sdk.integrations.celery import CeleryIntegration
-
-    sentry_sdk.init(
-        dsn=SENTRY_DSN,
-        traces_sample_rate=0.1,
-        profiles_sample_rate=0.1,
-        integrations=[
-            DjangoIntegration(),
-            CeleryIntegration(),
-        ],
-        environment="production" if not DEBUG else "development",
-        send_default_pii=False,
-    )
-
 INSTALLED_APPS = [
     "daphne",
     "django.contrib.admin",
@@ -44,8 +25,6 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "allauth",
     "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
     "crispy_forms",
     "crispy_tailwind",
     "django_filters",
@@ -54,9 +33,7 @@ INSTALLED_APPS = [
     "csp",
     "django_ratelimit",
     "corsheaders",
-    "storages",
     "django_cleanup",
-    "django_extensions",
     # Local
     "accounts",
     "profiles",
@@ -150,23 +127,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SITE_ID = 1
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+# Верификация email отключена: регистрация работает сразу, без подтверждения
+ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 ACCOUNT_ADAPTER = "accounts.adapter.AccountAdapter"
 LOGIN_REDIRECT_URL = "/dashboard/"
-
-# Allauth providers
-SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        "APP": {
-            "client_id": env.str("GOOGLE_CLIENT_ID", ""),
-            "secret": env.str("GOOGLE_CLIENT_SECRET", ""),
-        },
-        "SCOPE": ["profile", "email"],
-        "AUTH_PARAMS": {"access_type": "online"},
-    }
-}
 
 # DRF
 REST_FRAMEWORK = {

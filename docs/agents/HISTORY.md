@@ -4,6 +4,35 @@
 
 ## Сессии
 
+### 2026-08-11 — упрощение аутентификации: убран Google OAuth, верификация email отключена, удалён django-storages
+
+**Сделано:**
+- **Google OAuth удалён**: из `INSTALLED_APPS` убраны `allauth.socialaccount` и
+  `allauth.socialaccount.providers.google`, удалён блок `SOCIALACCOUNT_PROVIDERS`
+  (`config/settings/base.py`), Google-кнопки из `templates/account/login.html` и `signup.html`,
+  `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` из `.env.example`.
+- **Верификация email отключена**: `ACCOUNT_EMAIL_VERIFICATION = "mandatory"` → `"none"` —
+  регистрация работает сразу без подтверждения (SMTP в проде не обязателен).
+  Тест `test_allauth.py` обновлён (логин после регистрации без верификации).
+- **django-storages удалён** (не использовался): из `INSTALLED_APPS`, `pyproject.toml`,
+  `AWS_*` из `.env.example`. `MEDIA_ROOT` остаётся локальным.
+
+**Результат:** зависимости без socialaccount/storages, регистрация без email-подтверждения.
+
+### 2026-08-11 — зачистка неиспользуемых зависимостей и сервисов
+
+**Сделано:**
+- Из `pyproject.toml` удалены неиспользуемые зависимости: `asyncpg`, `uvicorn`,
+  `sentry-sdk`, `django-extensions`. `django-debug-toolbar` перенесён в `[dev]`
+  (подключается только в `settings/local.py`).
+- Из `config/settings/base.py` удалён блок Sentry (активировался только при
+  заданном `SENTRY_DSN`) и `django_extensions` из `INSTALLED_APPS`.
+- Из `docker-compose.yml` удалён сервис `celery-beat` (в `config/celery.py` нет
+  `beat_schedule` — задач по расписанию нет).
+- `SENTRY_DSN` убран из `.env.example`.
+
+**Результат:** 79 тестов зелёные.
+
 ### 2026-08-10 — продакшен-полировка: SMTP, CI, покрытие 82%, тесты messaging/notifications, uv
 
 **Сделано:**

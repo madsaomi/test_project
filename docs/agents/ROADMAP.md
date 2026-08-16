@@ -30,8 +30,8 @@
 - `[x]` Консолидировать зависимости: `requirements.txt` удалён, единственный источник —
   `pyproject.toml`, CI переведён на `uv` (Docker/`run.sh` — pip из pyproject).
 - `[ ]` HTTPS/TLS на nginx (сейчас `SECURE_SSL_REDIRECT=false` и нет certbot).
-- `[ ]` Модульные settings (base/local/production) вместо одного `settings.py`.
-- `[ ]` i18n/l10n: сейчас только русский, без `locale/` (аудитория — Узбекистан).
+- `[x]` Модульные settings (base/local/production) вместо одного `settings.py`.
+- `[x]` i18n/l10n: `LANGUAGES` ru/en/uz + `LocaleMiddleware` + `locale/` каталоги (аудитория — Узбекистан).
 
 ## Ближние задачи
 
@@ -40,15 +40,16 @@
 - `[x]` Тесты для `messaging` (диалоги, отметки прочитанного) — 13 тестов;
   попутно исправлен баг в `InboxView.get_queryset` (не было `return`).
 - `[x]` Тесты для `notifications` (WebSocket consumers) — 4 async-теста.
-- `[ ]` Тесты авторизации (allauth-потоки: регистрация, подтверждение email, Google OAuth).
+- `[ ]` Тесты авторизации (allauth-потоки: регистрация, вход/выход, сброс пароля).
 
 ## Функциональные задачи
 
 - `[ ]` Отправка уведомлений по событиям (новый отклик, новое сообщение) —
   потребители в `notifications/consumers.py` есть, но событий нет
   (события можно слать в WebSocket-группу `user_{id}` через Celery-задачи).
-- `[ ]` Проверить email-потоки при `ACCOUNT_EMAIL_VERIFICATION = "mandatory"`
-  (SMTP-настройки добавлены, нужен реальный бэкенд в проде).
+- `[x]` Google OAuth удалён (2026-08-11); верификация email отключена
+  (`ACCOUNT_EMAIL_VERIFICATION = "none"`) — регистрация без подтверждения.
+  Email-уведомления (Celery) работают, SMTP-настройки в проде остаются.
 - `[ ]` Employer-сценарий по вакансиям: полный CRUD через UI и API-эквиваленты.
 
 ## Инфраструктура / качество
